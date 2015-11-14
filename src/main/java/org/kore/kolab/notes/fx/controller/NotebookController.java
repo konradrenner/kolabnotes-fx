@@ -16,10 +16,28 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.layout.VBox;
+
 /**
  *
  * @author Konrad Renner
  */
 public class NotebookController {
     
+    @FXML
+    private VBox notebookBox;
+    
+    @FXML
+    void addNotebook(ActionEvent event){
+        System.out.println("org.kore.kolab.notes.fx.controller.NotebookController.addNotebook()");
+        //TODO
+    }
+    
+    @FXML
+    void deleteNotebook(ActionEvent event){
+        System.out.println("org.kore.kolab.notes.fx.controller.NotebookController.deleteNotebook()");
+        //TODO
+    }
 }

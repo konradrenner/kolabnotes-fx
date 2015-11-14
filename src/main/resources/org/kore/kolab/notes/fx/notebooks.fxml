@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.NotebookController">
+<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40" fx:controller="org.kore.kolab.notes.fx.controller.NotebookController">
     <bottom>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <buttons>
-            <Button mnemonicParsing="false" text="Add" />
-              <Button mnemonicParsing="false" text="Delete" />
+            <Button mnemonicParsing="false" onAction="#addNotebook" text="Add" />
+              <Button mnemonicParsing="false" onAction="#deleteNotebook" text="Delete" />
           </buttons>
         </ButtonBar>
      </bottom>
      <center>
         <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
            <content>
-              <VBox id="notebookPane">
+              <VBox id="notebookPane" fx:id="notebookBox">
                  <padding>
                     <javafx.geometry.Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                  </padding>
