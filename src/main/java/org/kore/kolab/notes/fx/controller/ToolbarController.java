@@ -17,13 +17,21 @@
 package org.kore.kolab.notes.fx.controller;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
+import org.kore.kolab.notes.fx.domain.account.Account;
+import org.kore.kolab.notes.fx.domain.account.AccountType;
+import org.kore.kolab.notes.fx.domain.account.SyncIntervallType;
+import org.kore.kolab.notes.fx.domain.tag.AccountRepository;
 
 /**
  * FXML Controller class
@@ -37,6 +45,8 @@ public class ToolbarController implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        initAccountChoiceBox(new AccountRepository());
+        
         accountChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -47,6 +57,35 @@ public class ToolbarController implements Initializable{
         });
     }
 
+    void initAccountChoiceBox(AccountRepository repository){
+        initLocalAccount(repository);
+        
+        List<Account> accounts = repository.getAccounts();
+        
+        ObservableList<String> accountNames = FXCollections.observableArrayList();
+        
+        accounts.stream().forEach((account) -> {
+            accountNames.add(account.getId());
+        });
+        
+        accountChoiceBox.setItems(accountNames);
+    }
+    
+    private void initLocalAccount(AccountRepository accountRepository ){
+        Optional<Account> account = new AccountRepository().getAccount("local");
+        
+        if(!account.isPresent()){
+            Account local = new Account("local");
+            local.setAccountType(AccountType.LOCAL);
+            local.setEmail("local");
+            local.setPassword("local");
+            local.setRootFolder("Notes");
+            local.setSyncIntervallType(SyncIntervallType.NONE);
+            
+            accountRepository.createAccount(local);
+        }
+    }
+    
     
     @FXML
     void createAccount(ActionEvent event){

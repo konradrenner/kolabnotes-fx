@@ -21,14 +21,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
  * @author Konrad Renner
  */
+@NamedQueries({
+    @NamedQuery(name = "Account.findAll", query = "SELECT account FROM Account account ORDER BY account.id"),
+})
 @Entity
 public class Account implements Serializable {
 

@@ -21,5 +21,5 @@ package org.kore.kolab.notes.fx.domain.account;
  * @author Konrad Renner
  */
 public enum SyncIntervallType {
-    MINUTE, HOUR, DAY;
+    NONE,MINUTE, HOUR, DAY;
 }
