@@ -16,10 +16,28 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Accordion;
+
 /**
  *
  * @author Konrad Renner
  */
 public class NoteOverviewController {
     
+    @FXML
+    private Accordion noteAccordion;
+    
+    @FXML
+    void addNote(ActionEvent event){
+        System.out.println("org.kore.kolab.notes.fx.controller.NoteOverviewController.addNote()");
+        //TODO
+    }
+    
+    @FXML
+    void deleteNote(ActionEvent event){
+        System.out.println("org.kore.kolab.notes.fx.controller.NoteOverviewController.deleteNote()");
+        //TODO
+    }
 }
