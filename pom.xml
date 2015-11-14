@@ -18,6 +18,13 @@
         <!-- Used as the 'Vendor' for JNLP generation -->
         <name>KoRe</name>
     </organization>
+    
+    <repositories>
+        <repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -105,6 +112,11 @@
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+	    <groupId>com.github.konradrenner</groupId>
+	    <artifactId>kolabnotes-java</artifactId>
+	    <version>1.4.0</version>
+	</dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>

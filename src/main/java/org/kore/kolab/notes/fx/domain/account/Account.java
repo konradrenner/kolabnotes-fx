@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kore.kolab.notes.fx.domain;
+package org.kore.kolab.notes.fx.domain.account;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -27,7 +27,7 @@ import javax.persistence.Id;
  * @author Konrad Renner
  */
 @Entity
-public class FXNote implements Serializable {
+public class Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -52,10 +52,10 @@ public class FXNote implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof FXNote)) {
+        if (!(object instanceof Account)) {
             return false;
         }
-        FXNote other = (FXNote) object;
+        Account other = (Account) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -64,7 +64,7 @@ public class FXNote implements Serializable {
 
     @Override
     public String toString() {
-        return "org.kore.kolab.notes.fx.domain.FXNote[ id=" + id + " ]";
+        return "org.kore.kolab.notes.fx.domain.Account[ id=" + id + " ]";
     }
     
 }
