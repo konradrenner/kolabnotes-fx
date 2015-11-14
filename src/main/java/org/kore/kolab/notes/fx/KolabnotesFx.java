@@ -35,6 +35,8 @@ public class KolabnotesFx extends Application {
         Scene scene = new Scene(root);
         
         stage.setScene(scene);
+        stage.setTitle("kolabnotes-fx");
+        stage.setMaximized(true);
         stage.show();
     }
 

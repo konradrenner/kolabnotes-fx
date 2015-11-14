@@ -10,17 +10,10 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.MainWindowController">
    <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <items>
-            <ChoiceBox fx:id="accountChoiceBox" prefWidth="150.0" />
-          <Button mnemonicParsing="false" text="New Account" />
-            <Button mnemonicParsing="false" text="Edit Account" />
-            <Button mnemonicParsing="false" text="Sync now" />
-        </items>
-      </ToolBar>
+      <fx:include source="toolbar.fxml"/>
    </top>
    <center>
-      <SplitPane dividerPositions="0.2" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.1" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
             <SplitPane dividerPositions="0.3" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
               <items>

@@ -31,37 +31,5 @@ import javafx.scene.control.ChoiceBox;
  */
 public class MainWindowController{
     
-    @FXML
-    private ChoiceBox accountChoiceBox;
-
-    @FXML
-    void initialize(URL location, ResourceBundle resources) {
-        //TODO
-        accountChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                System.out.println(".changed()");
-                //TODO
-            }
-            
-        });
-    }
-    
-    @FXML
-    void createAccount(ActionEvent event){
-        //TODO
-        System.out.println("org.kore.kolab.notes.fx.MainWindowController.changeAccount()");
-    }
-    
-    @FXML
-    void editAccount(ActionEvent event){
-        //TODO
-        System.out.println("org.kore.kolab.notes.fx.MainWindowController.changeAccount()");
-    }
-    
-    @FXML
-    void syncNow(ActionEvent event){
-        //TODO
-        System.out.println("org.kore.kolab.notes.fx.MainWindowController.changeAccount()");
-    }
+    //nothing at the moment
 }
