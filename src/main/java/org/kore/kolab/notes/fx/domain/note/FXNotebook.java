@@ -17,29 +17,45 @@
 package org.kore.kolab.notes.fx.domain.note;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import org.kore.kolab.notes.fx.persistence.KolabObject;
 
 /**
  *
  * @author Konrad Renner
  */
+@NamedQueries({
+    @NamedQuery(name = "FXNotebook.findAll", query = "SELECT notebook FROM FXNotebook notebook ORDER BY notebook.summary"),
+    @NamedQuery(name = "FXNotebook.findBySummary", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.summary = :summary ORDER BY notebook.summary"),
+    @NamedQuery(name = "FXNotebook.findAllModified", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.modificationDate < :modificationDate ORDER BY notebook.summary")
+})
+@Table(name = "notebook")
 @Entity
-public class FXNotebook implements Serializable {
+public class FXNotebook extends KolabObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    public Long getId() {
-        return id;
+    
+    @Column(nullable = false, unique = true)
+    private String summary;
+    
+    public FXNotebook(String id) {
+        this.id = id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    protected FXNotebook() {
+        //Tool
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     @Override
@@ -64,7 +80,7 @@ public class FXNotebook implements Serializable {
 
     @Override
     public String toString() {
-        return "org.kore.kolab.notes.fx.domain.FXNotebook[ id=" + id + " ]";
+        return "FXNotebook{"+ super.toString() + "summary=" + summary +  '}';
     }
     
 }

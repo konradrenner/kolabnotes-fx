@@ -17,7 +17,10 @@
 package org.kore.kolab.notes.fx.domain.account;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,17 +33,121 @@ import javax.persistence.Id;
 public class Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
-    public Long getId() {
+    @Id
+    private String id;
+    
+    @Column(nullable = false)
+    private String email;
+    
+    @Column(nullable = false)
+    private String rootFolder;
+    
+    @Column(nullable = false)
+    private String password;
+    
+    @Column(nullable = false)
+    private long syncIntervall;
+    
+    @Column(nullable = false)
+    private boolean syncSharedFolders;
+    
+    @Column(nullable = false)
+    private boolean sslEnabled;
+    
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+    
+    @Column(nullable = false)
+    private boolean enableKolabExtensions;
+    
+    @Enumerated(EnumType.STRING)
+    private SyncIntervallType syncIntervallType;
+    
+    public Account(String id) {
+        this.id = id;
+    }
+
+    protected Account() {
+        //Tool
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getEmail() {
+        return email;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getRootFolder() {
+        return rootFolder;
+    }
+
+    public void setRootFolder(String rootFolder) {
+        this.rootFolder = rootFolder;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public long getSyncIntervall() {
+        return syncIntervall;
+    }
+
+    public void setSyncIntervall(long syncIntervall) {
+        this.syncIntervall = syncIntervall;
+    }
+
+    public boolean isSyncSharedFolders() {
+        return syncSharedFolders;
+    }
+
+    public void setSyncSharedFolders(boolean syncSharedFolders) {
+        this.syncSharedFolders = syncSharedFolders;
+    }
+
+    public boolean isSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
+    }
+
+    public boolean isEnableKolabExtensions() {
+        return enableKolabExtensions;
+    }
+
+    public void setEnableKolabExtensions(boolean enableKolabExtensions) {
+        this.enableKolabExtensions = enableKolabExtensions;
+    }
+
+    public SyncIntervallType getSyncIntervallType() {
+        return syncIntervallType;
+    }
+
+    public void setSyncIntervallType(SyncIntervallType syncIntervallType) {
+        this.syncIntervallType = syncIntervallType;
+    }
+    
 
     @Override
     public int hashCode() {

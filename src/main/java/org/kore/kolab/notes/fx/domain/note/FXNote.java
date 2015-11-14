@@ -17,30 +17,82 @@
 package org.kore.kolab.notes.fx.domain.note;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import org.kore.kolab.notes.Note;
+import org.kore.kolab.notes.fx.persistence.KolabObject;
 
 /**
  *
  * @author Konrad Renner
  */
+@NamedQueries({
+    @NamedQuery(name = "FXNote.findAll", query = "SELECT note FROM FXNote note ORDER BY note.summary"),
+    @NamedQuery(name = "FXNote.findAllModified", query = "SELECT note FROM FXNote note WHERE note.modificationDate < :modificationDate ORDER BY note.summary")
+})
+@Table(name = "note")
 @Entity
-public class FXNote implements Serializable {
+public class FXNote extends KolabObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    
+    @Column(nullable = false)
+    private String summary;
+    
+    @Column
+    private String description;
+    
+    @Enumerated(EnumType.STRING)
+    private Note.Classification classification;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
+    @Column
+    private String color;
+    
+    public FXNote(String id) {
         this.id = id;
     }
+
+    protected FXNote() {
+        //Tool
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Note.Classification getClassification() {
+        return classification;
+    }
+
+    public void setClassification(Note.Classification classification) {
+        this.classification = classification;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+    
 
     @Override
     public int hashCode() {
@@ -64,7 +116,8 @@ public class FXNote implements Serializable {
 
     @Override
     public String toString() {
-        return "org.kore.kolab.notes.fx.domain.FXNote[ id=" + id + " ]";
+        return "FXNote{"+ super.toString() + "summary=" + summary + ", description=" + description + ", classification=" + classification + ", color=" + color + '}';
     }
-    
+
+   
 }
