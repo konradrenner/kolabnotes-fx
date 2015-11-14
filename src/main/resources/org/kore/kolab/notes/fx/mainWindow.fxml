@@ -8,11 +8,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane  fx:controller="org.kore.kolab.notes.fx.MainWindowController"  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.MainWindowController">
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <ChoiceBox prefWidth="150.0" />
+            <ChoiceBox fx:id="accountChoiceBox" prefWidth="150.0" />
           <Button mnemonicParsing="false" text="New Account" />
             <Button mnemonicParsing="false" text="Edit Account" />
             <Button mnemonicParsing="false" text="Sync now" />
@@ -24,104 +24,14 @@
         <items>
             <SplitPane dividerPositions="0.3" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
               <items>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <bottom>
-                        <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                          <buttons>
-                            <Button mnemonicParsing="false" text="Add" />
-                              <Button mnemonicParsing="false" text="Color" />
-                          </buttons>
-                        </ButtonBar>
-                     </bottom>
-                     <center>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                           <content>
-                              <FlowPane id="tagPane" prefHeight="200.0" prefWidth="200.0" />
-                           </content>
-                        </ScrollPane>
-                     </center>
-                  </BorderPane>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <bottom>
-                        <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                          <buttons>
-                            <Button mnemonicParsing="false" text="Add" />
-                              <Button mnemonicParsing="false" text="Delete" />
-                          </buttons>
-                        </ButtonBar>
-                     </bottom>
-                     <center>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                           <content>
-                              <VBox id="notebookPane">
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </center>
-                  </BorderPane>
+                  <fx:include source="tags.fxml"/>
+                  <fx:include source="notebooks.fxml"/>
               </items>
             </SplitPane>
             <SplitPane dividerPositions="0.3" prefHeight="160.0" prefWidth="200.0">
               <items>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <bottom>
-                        <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                          <buttons>
-                            <Button mnemonicParsing="false" text="Add" />
-                              <Button mnemonicParsing="false" text="Delete" />
-                          </buttons>
-                        </ButtonBar>
-                     </bottom>
-                     <center>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                           <content>
-                              <Accordion id="noteAccordion" />
-                           </content>
-                        </ScrollPane>
-                     </center>
-                  </BorderPane>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
-                     <center>
-                        <HTMLEditor id="noteEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="200.0" prefWidth="506.0" BorderPane.alignment="CENTER" />
-                     </center>
-                     <top>
-                        <BorderPane BorderPane.alignment="CENTER">
-                           <top>
-                              <TextField promptText="Summary" BorderPane.alignment="CENTER" />
-                           </top>
-                           <bottom>
-                              <BorderPane BorderPane.alignment="CENTER">
-                                 <right>
-                                    <Button mnemonicParsing="false" text="Edit" BorderPane.alignment="CENTER" />
-                                 </right>
-                                 <center>
-                                    <ScrollPane vbarPolicy="NEVER" BorderPane.alignment="CENTER">
-                                       <content>
-                                          <HBox />
-                                       </content>
-                                    </ScrollPane>
-                                 </center>
-                              </BorderPane>
-                           </bottom>
-                        </BorderPane>
-                     </top>
-                     <bottom>
-                        <BorderPane BorderPane.alignment="CENTER">
-                           <center>
-                              <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                <items>
-                                  <Button mnemonicParsing="false" text="Save" />
-                                    <ChoiceBox prefWidth="150.0" />
-                                    <ColorPicker />
-                                </items>
-                              </ToolBar>
-                           </center>
-                        </BorderPane>
-                     </bottom>
-                  </BorderPane>
+                  <fx:include source="noteOverview.fxml"/>
+                  <fx:include source="noteDetail.fxml"/>
               </items>
             </SplitPane>
         </items>
