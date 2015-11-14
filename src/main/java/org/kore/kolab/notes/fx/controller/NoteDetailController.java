@@ -16,10 +16,67 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.web.HTMLEditor;
+
 /**
  *
  * @author Konrad Renner
  */
-public class NoteDetailController {
+public class NoteDetailController implements Initializable{
     
+    @FXML
+    private ColorPicker noteColorPicker;
+    
+    @FXML
+    private ChoiceBox noteClassificationChoiceBox;
+    
+    @FXML
+    private HTMLEditor noteEditor;
+    
+    @FXML
+    private HBox tagBox;
+    
+    @FXML
+    private TextField summaryTextField;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        noteClassificationChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                System.out.println(".changed()");
+                //TODO
+            }
+            
+        });
+    }
+    
+    @FXML
+    void saveNote(ActionEvent event){
+        System.out.println("org.kore.kolab.notes.fx.controller.NoteDetailController.saveNote()");
+        //TODO
+    }
+    
+    @FXML
+    void editTags(ActionEvent event){
+        System.out.println("org.kore.kolab.notes.fx.controller.NoteDetailController.editTags()");
+        //TODO
+    }
+    
+    @FXML
+    void changeColor(ActionEvent event){
+        System.out.println("org.kore.kolab.notes.fx.controller.NoteDetailController.changeColor()");
+        //TODO
+    }
 }
