@@ -16,10 +16,28 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.layout.FlowPane;
+
 /**
  *
  * @author Konrad Renner
  */
 public class TagController {
     
+    @FXML
+    private FlowPane tagPane;
+    
+    @FXML
+    void addTag(ActionEvent event){
+        System.out.println("org.kore.kolab.notes.fx.controller.TagController.addTag()");
+        //TODO
+    }
+    
+    @FXML
+    void chooseTagColor(){
+        System.out.println("org.kore.kolab.notes.fx.controller.TagController.chooseTagColor()");
+        //TODO
+    }
 }

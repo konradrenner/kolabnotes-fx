@@ -6,19 +6,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.TagController">
+<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40" fx:controller="org.kore.kolab.notes.fx.controller.TagController">
     <bottom>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <buttons>
-            <Button mnemonicParsing="false" text="Add" />
-              <Button mnemonicParsing="false" text="Color" />
+            <Button mnemonicParsing="false" onAction="#addTag" text="Add" />
+              <Button mnemonicParsing="false" onAction="#chooseTagColor" text="Color" />
           </buttons>
         </ButtonBar>
      </bottom>
      <center>
         <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
            <content>
-              <FlowPane id="tagPane" prefHeight="200.0" prefWidth="200.0" />
+              <FlowPane id="tagPane" fx:id="tagPane" prefHeight="200.0" prefWidth="200.0" />
            </content>
         </ScrollPane>
      </center>
