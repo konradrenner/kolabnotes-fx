@@ -58,8 +58,6 @@ public class ToolbarController implements Initializable{
     }
 
     void initAccountChoiceBox(AccountRepository repository){
-        initLocalAccount(repository);
-        
         List<Account> accounts = repository.getAccounts();
         
         ObservableList<String> accountNames = FXCollections.observableArrayList();
@@ -70,22 +68,6 @@ public class ToolbarController implements Initializable{
         
         accountChoiceBox.setItems(accountNames);
     }
-    
-    private void initLocalAccount(AccountRepository accountRepository ){
-        Optional<Account> account = new AccountRepository().getAccount("local");
-        
-        if(!account.isPresent()){
-            Account local = new Account("local");
-            local.setAccountType(AccountType.LOCAL);
-            local.setEmail("local");
-            local.setPassword("local");
-            local.setRootFolder("Notes");
-            local.setSyncIntervallType(SyncIntervallType.NONE);
-            
-            accountRepository.createAccount(local);
-        }
-    }
-    
     
     @FXML
     void createAccount(ActionEvent event){
