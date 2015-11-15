@@ -17,10 +17,14 @@
 package org.kore.kolab.notes.fx.domain.note;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.kore.kolab.notes.fx.persistence.KolabObject;
 
@@ -29,9 +33,9 @@ import org.kore.kolab.notes.fx.persistence.KolabObject;
  * @author Konrad Renner
  */
 @NamedQueries({
-    @NamedQuery(name = "FXNotebook.findAll", query = "SELECT notebook FROM FXNotebook notebook ORDER BY notebook.summary"),
-    @NamedQuery(name = "FXNotebook.findBySummary", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.summary = :summary ORDER BY notebook.summary"),
-    @NamedQuery(name = "FXNotebook.findAllModified", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.modificationDate < :modificationDate ORDER BY notebook.summary")
+    @NamedQuery(name = "FXNotebook.findAll", query = "SELECT notebook FROM FXNotebook notebook ORDER BY notebook.nbsummary"),
+    @NamedQuery(name = "FXNotebook.findBySummary", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.nbsummary = :summary ORDER BY notebook.nbsummary"),
+    @NamedQuery(name = "FXNotebook.findAllModified", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.modificationDate < :modificationDate ORDER BY notebook.nbsummary")
 })
 @Table(name = "notebook")
 @Entity
@@ -40,7 +44,10 @@ public class FXNotebook extends KolabObject implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Column(nullable = false, unique = true)
-    private String summary;
+    private String nbsummary;
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "notebook")
+    private List<FXNote> notes;
     
     public FXNotebook(String id) {
         this.id = id;
@@ -50,12 +57,16 @@ public class FXNotebook extends KolabObject implements Serializable {
         //Tool
     }
 
+    public List<FXNote> getNotes() {
+        return notes;
+    }
+    
     public String getSummary() {
-        return summary;
+        return nbsummary;
     }
 
     public void setSummary(String summary) {
-        this.summary = summary;
+        this.nbsummary = summary;
     }
 
     @Override
@@ -80,7 +91,7 @@ public class FXNotebook extends KolabObject implements Serializable {
 
     @Override
     public String toString() {
-        return "FXNotebook{"+ super.toString() + "summary=" + summary +  '}';
+        return "FXNotebook{" + super.toString() + "nbsummary=" + nbsummary + ", notes=" + notes + '}';
     }
-    
+
 }

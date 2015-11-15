@@ -17,11 +17,14 @@
 package org.kore.kolab.notes.fx.domain.tag;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import org.kore.kolab.notes.fx.domain.note.FXNote;
 import org.kore.kolab.notes.fx.persistence.KolabObject;
 
 /**
@@ -29,9 +32,9 @@ import org.kore.kolab.notes.fx.persistence.KolabObject;
  * @author Konrad Renner
  */
 @NamedQueries({
-    @NamedQuery(name = "FXTag.findAll", query = "SELECT tag FROM FXTag tag ORDER BY tag.summary"),
-    @NamedQuery(name = "FXTag.findBySummary", query = "SELECT tag FROM FXTag tag WHERE tag.summary = :summary ORDER BY tag.summary"),
-    @NamedQuery(name = "FXTag.findAllModified", query = "SELECT tag FROM FXTag tag WHERE tag.modificationDate < :modificationDate ORDER BY tag.summary")
+    @NamedQuery(name = "FXTag.findAll", query = "SELECT tag FROM FXTag tag ORDER BY tag.tagsummary"),
+    @NamedQuery(name = "FXTag.findBySummary", query = "SELECT tag FROM FXTag tag WHERE tag.tagsummary = :summary ORDER BY tag.tagsummary"),
+    @NamedQuery(name = "FXTag.findAllModified", query = "SELECT tag FROM FXTag tag WHERE tag.modificationDate < :modificationDate ORDER BY tag.tagsummary")
 })
 @Table(name="tag")
 @Entity
@@ -40,10 +43,13 @@ public class FXTag extends KolabObject implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Column(nullable = false)
-    private String summary;
+    private String tagsummary;
     
     @Column
     private String color;
+    
+    @ManyToMany(mappedBy="tags")
+    private List<FXNote> notes;
     
     public FXTag(String id) {
         this.id = id;
@@ -53,12 +59,20 @@ public class FXTag extends KolabObject implements Serializable {
         //Tool
     }
 
+    public List<FXNote> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<FXNote> notes) {
+        this.notes = notes;
+    }
+    
     public String getSummary() {
-        return summary;
+        return tagsummary;
     }
 
     public void setSummary(String summary) {
-        this.summary = summary;
+        this.tagsummary = summary;
     }
 
     public String getColor() {
@@ -92,8 +106,6 @@ public class FXTag extends KolabObject implements Serializable {
 
     @Override
     public String toString() {
-        return "FXTag{" + super.toString() + "summary=" + summary + ", color=" + color + '}';
+        return "FXTag{" + super.toString() + "tagsummary=" + tagsummary + ", color=" + color + ", notes=" + notes + '}';
     }
-
-   
 }

@@ -17,14 +17,20 @@
 package org.kore.kolab.notes.fx.domain.note;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import org.kore.kolab.notes.Note;
+import org.kore.kolab.notes.fx.domain.tag.FXTag;
 import org.kore.kolab.notes.fx.persistence.KolabObject;
 
 /**
@@ -52,6 +58,17 @@ public class FXNote extends KolabObject implements Serializable {
 
     @Column
     private String color;
+    
+    @ManyToOne
+    @JoinColumn(name = "nbsummary")
+    private FXNotebook notebook;
+    
+    @ManyToMany
+    @JoinTable(
+      name="note_tags",
+      joinColumns={@JoinColumn(name="note_id", referencedColumnName="id")},
+      inverseJoinColumns={@JoinColumn(name="tag_id", referencedColumnName="id")})
+    private List<FXTag> tags;
     
     public FXNote(String id) {
         this.id = id;
@@ -92,7 +109,16 @@ public class FXNote extends KolabObject implements Serializable {
     public void setColor(String color) {
         this.color = color;
     }
-    
+
+    public FXNotebook getNotebook() {
+        return notebook;
+    }
+
+
+    public List<FXTag> getTags() {
+        return tags;
+    }
+
 
     @Override
     public int hashCode() {
@@ -116,8 +142,6 @@ public class FXNote extends KolabObject implements Serializable {
 
     @Override
     public String toString() {
-        return "FXNote{"+ super.toString() + "summary=" + summary + ", description=" + description + ", classification=" + classification + ", color=" + color + '}';
+        return "FXNote{" + super.toString() + "summary=" + summary + ", description=" + description + ", classification=" + classification + ", color=" + color + ", notebook=" + notebook + ", tags=" + tags + '}';
     }
-
-   
 }
