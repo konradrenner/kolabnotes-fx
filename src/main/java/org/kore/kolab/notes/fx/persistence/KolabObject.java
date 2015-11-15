@@ -39,8 +39,24 @@ public class KolabObject {
     @Column(nullable = false)
     protected Timestamp modificationDate;
     
-    @Column
+    @Column(nullable = false)
     private boolean deleted;
+    
+    @Column(nullable = false)
+    private String accountId;
+    
+    public KolabObject(String accountId, String id){
+        this.id = id;
+        this.accountId = accountId;
+    }
+    
+    public KolabObject(){
+        //tool
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
 
     public String getProductId() {
         return productId;
@@ -80,7 +96,7 @@ public class KolabObject {
 
     @Override
     public String toString() {
-        return "KolabObject{" + "id=" + id + ", productId=" + productId + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", deleted=" + deleted + '}';
+        return "KolabObject{ accountId=" + accountId + ", id=" + id + ", productId=" + productId + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", deleted=" + deleted + '}';
     }
 
     

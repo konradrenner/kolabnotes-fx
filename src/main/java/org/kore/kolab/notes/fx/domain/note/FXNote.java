@@ -38,9 +38,9 @@ import org.kore.kolab.notes.fx.persistence.KolabObject;
  * @author Konrad Renner
  */
 @NamedQueries({
-    @NamedQuery(name = "FXNote.findAll", query = "SELECT note FROM FXNote note ORDER BY note.summary"),
-    @NamedQuery(name = "FXNote.findWithDeletedFlag", query = "SELECT note FROM FXNote note WHERE note.deleted = :deleted ORDER BY note.summary"),
-    @NamedQuery(name = "FXNote.findAllModified", query = "SELECT note FROM FXNote note WHERE note.modificationDate < :modificationDate ORDER BY note.summary")
+    @NamedQuery(name = "FXNote.findAll", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId ORDER BY note.summary"),
+    @NamedQuery(name = "FXNote.findWithDeletedFlag", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId note.deleted = :deleted ORDER BY note.summary"),
+    @NamedQuery(name = "FXNote.findAllModified", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId note.modificationDate < :modificationDate ORDER BY note.summary")
 })
 @Table(name = "note")
 @Entity
@@ -71,8 +71,8 @@ public class FXNote extends KolabObject implements Serializable {
       inverseJoinColumns={@JoinColumn(name="tag_id", referencedColumnName="id")})
     private List<FXTag> tags;
     
-    public FXNote(String id) {
-        this.id = id;
+    public FXNote(String accountId, String id) {
+        super(accountId, id);
     }
 
     protected FXNote() {

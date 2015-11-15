@@ -33,8 +33,8 @@ public class TagRepository {
         em = PersistenceManager.createEntityManager();
     }  
     
-    public List<FXTag> getNotebooks(){
-        return Collections.unmodifiableList(em.createNamedQuery("FXTag.findAll", FXTag.class).getResultList());
+    public List<FXTag> getTags(String accountId){
+        return Collections.unmodifiableList(em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getResultList());
     }
     
     public void createTag(FXTag tag){

@@ -16,18 +16,35 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.layout.FlowPane;
+import org.kore.kolab.notes.fx.domain.tag.FXTag;
+import org.kore.kolab.notes.fx.domain.tag.TagRepository;
 
 /**
  *
  * @author Konrad Renner
  */
-public class TagController {
+public class TagController implements Initializable{
     
     @FXML
     private FlowPane tagPane;
+    
+    private ObservableList<String> tags;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        TagRepository tagRepository = new TagRepository();
+        
+        List<FXTag> tags1 = tagRepository.getTags();
+    }
+    
     
     @FXML
     void addTag(ActionEvent event){

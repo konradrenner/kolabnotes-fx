@@ -33,10 +33,10 @@ import org.kore.kolab.notes.fx.persistence.KolabObject;
  * @author Konrad Renner
  */
 @NamedQueries({
-    @NamedQuery(name = "FXNotebook.findAll", query = "SELECT notebook FROM FXNotebook notebook ORDER BY notebook.nbsummary"),
-    @NamedQuery(name = "FXNotebook.findWithDeletedFlag", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.deleted = :deleted ORDER BY notebook.nbsummary"),
-    @NamedQuery(name = "FXNotebook.findBySummary", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.nbsummary = :summary ORDER BY notebook.nbsummary"),
-    @NamedQuery(name = "FXNotebook.findAllModified", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.modificationDate < :modificationDate ORDER BY notebook.nbsummary")
+    @NamedQuery(name = "FXNotebook.findAll", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.accountId = :accountId ORDER BY notebook.nbsummary"),
+    @NamedQuery(name = "FXNotebook.findWithDeletedFlag", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.accountId = :accountId notebook.deleted = :deleted ORDER BY notebook.nbsummary"),
+    @NamedQuery(name = "FXNotebook.findBySummary", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.accountId = :accountId notebook.nbsummary = :summary ORDER BY notebook.nbsummary"),
+    @NamedQuery(name = "FXNotebook.findAllModified", query = "SELECT notebook FROM FXNotebook notebook WHERE notebook.accountId = :accountId notebook.modificationDate < :modificationDate ORDER BY notebook.nbsummary")
 })
 @Table(name = "notebook")
 @Entity
@@ -50,8 +50,8 @@ public class FXNotebook extends KolabObject implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "notebook")
     private List<FXNote> notes;
     
-    public FXNotebook(String id) {
-        this.id = id;
+    public FXNotebook(String accountId, String id) {
+        super(accountId, id);
     }
 
     protected FXNotebook() {

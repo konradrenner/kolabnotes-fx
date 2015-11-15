@@ -32,8 +32,8 @@ public class NoteRepository {
         em = PersistenceManager.createEntityManager();
     }  
     
-    public List<FXNotebook> getNotebooks(){
-        return Collections.unmodifiableList(em.createNamedQuery("FXNotebook.findWithDeletedFlag", FXNotebook.class).setParameter("deleted", false).getResultList());
+    public List<FXNotebook> getNotebooks(String accountId){
+        return Collections.unmodifiableList(em.createNamedQuery("FXNotebook.findWithDeletedFlag", FXNotebook.class).setParameter("accountId", accountId).setParameter("deleted", false).getResultList());
     }
     
     public void createNotebook(FXNotebook notebook){
