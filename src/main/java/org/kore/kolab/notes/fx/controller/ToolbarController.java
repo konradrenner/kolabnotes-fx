@@ -18,7 +18,6 @@ package org.kore.kolab.notes.fx.controller;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,8 +28,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import org.kore.kolab.notes.fx.domain.account.Account;
-import org.kore.kolab.notes.fx.domain.account.AccountType;
-import org.kore.kolab.notes.fx.domain.account.SyncIntervallType;
 import org.kore.kolab.notes.fx.domain.tag.AccountRepository;
 
 /**

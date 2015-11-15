@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.kore.kolab.notes.fx.domain.account.Account;
-import org.kore.kolab.notes.fx.persistence.EntityManagerProducer;
+import org.kore.kolab.notes.fx.persistence.PersistenceManager;
 
 /**
  *
@@ -29,14 +29,20 @@ import org.kore.kolab.notes.fx.persistence.EntityManagerProducer;
  */
 public class AccountRepository {
     
+    private final EntityManager em;
+
+    public AccountRepository() {
+        em = PersistenceManager.createEntityManager();
+    }
+    
+    
+    
     public List<Account> getAccounts(){
-        EntityManager em = EntityManagerProducer.createEntityManager();
         
         return Collections.unmodifiableList(em.createNamedQuery("Account.findAll", Account.class).getResultList());
     }
     
     public Optional<Account> getAccount(String name){
-        EntityManager em = EntityManagerProducer.createEntityManager();
         
         Account account = em.find(Account.class, name);
         
@@ -44,20 +50,23 @@ public class AccountRepository {
     }
     
     public void createAccount(Account account){
-        EntityManager em = EntityManagerProducer.createEntityManager();
-        
+        em.getTransaction().begin();
         em.persist(account);
+        em.getTransaction().commit();
+        em.close();
     }
     
     public void updateAccount(Account account){
-        EntityManager em = EntityManagerProducer.createEntityManager();
-        
+        em.getTransaction().begin();
         em.merge(account);
+        em.getTransaction().commit();
+        em.close();
     }
     
     public void deleteAccount(Account account){
-        EntityManager em = EntityManagerProducer.createEntityManager();
-        
+        em.getTransaction().begin();
         em.remove(account);
+        em.getTransaction().commit();
+        em.close();
     }
 }

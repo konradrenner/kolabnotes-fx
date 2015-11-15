@@ -24,10 +24,14 @@ import javax.persistence.Persistence;
  *
  * @author Konrad Renner
  */
-public class EntityManagerProducer {
+public class PersistenceManager {
     private final static EntityManagerFactory EMF = Persistence.createEntityManagerFactory("kolabnotes-fx");
     
     public static EntityManager createEntityManager(){
         return EMF.createEntityManager();
+    }
+    
+    public static void close(){
+        EMF.close();
     }
 }
