@@ -39,6 +39,8 @@ public class ToolbarController implements Initializable{
     
     @FXML
     private ChoiceBox accountChoiceBox;
+    
+    private static String SELECTED_ACCOUNT;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -47,8 +49,9 @@ public class ToolbarController implements Initializable{
         accountChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                System.out.println(".changed()");
-                //TODO
+                SELECTED_ACCOUNT = accountChoiceBox.getSelectionModel().getSelectedItem().toString();
+                
+                MainWindowController.refreshViews(SELECTED_ACCOUNT);
             }
             
         });
@@ -64,6 +67,10 @@ public class ToolbarController implements Initializable{
         });
         
         accountChoiceBox.setItems(accountNames);
+    }
+    
+    public final static String getSelectedAccount(){
+        return SELECTED_ACCOUNT;
     }
     
     @FXML

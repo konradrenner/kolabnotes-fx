@@ -29,6 +29,10 @@ public class NotebookController {
     @FXML
     private VBox notebookBox;
     
+    public final static void refreshView(String accountId){
+        //TODO
+    }
+    
     @FXML
     void addNotebook(ActionEvent event){
         System.out.println("org.kore.kolab.notes.fx.controller.NotebookController.addNotebook()");

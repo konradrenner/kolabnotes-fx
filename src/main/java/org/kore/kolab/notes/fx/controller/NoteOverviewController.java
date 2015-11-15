@@ -29,6 +29,10 @@ public class NoteOverviewController {
     @FXML
     private Accordion noteAccordion;
     
+    public final static void refreshView(String accountId){
+        //TODO
+    }
+    
     @FXML
     void addNote(ActionEvent event){
         System.out.println("org.kore.kolab.notes.fx.controller.NoteOverviewController.addNote()");

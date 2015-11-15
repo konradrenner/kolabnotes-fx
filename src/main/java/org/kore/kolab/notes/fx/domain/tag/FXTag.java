@@ -33,8 +33,8 @@ import org.kore.kolab.notes.fx.persistence.KolabObject;
  */
 @NamedQueries({
     @NamedQuery(name = "FXTag.findAll", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId ORDER BY tag.tagsummary"),
-    @NamedQuery(name = "FXTag.findBySummary", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId tag.tagsummary = :summary ORDER BY tag.tagsummary"),
-    @NamedQuery(name = "FXTag.findAllModified", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId tag.modificationDate < :modificationDate ORDER BY tag.tagsummary")
+    @NamedQuery(name = "FXTag.findBySummary", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId AND tag.tagsummary = :summary ORDER BY tag.tagsummary"),
+    @NamedQuery(name = "FXTag.findAllModified", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId AND tag.modificationDate < :modificationDate ORDER BY tag.tagsummary")
 })
 @Table(name="tag")
 @Entity

@@ -16,20 +16,16 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
-import java.awt.event.ActionEvent;
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-
 /**
  *
  * @author Konrad Renner
  */
 public class MainWindowController{
     
-    //nothing at the moment
+    public final static void refreshViews(String accountId){
+        TagController.refreshView(accountId);
+        NotebookController.refreshView(accountId);
+        NoteOverviewController.refreshView(accountId);
+        NoteDetailController.refreshView(accountId);
+    }
 }

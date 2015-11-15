@@ -18,7 +18,9 @@ package org.kore.kolab.notes.fx.domain.tag;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import org.kore.kolab.notes.fx.domain.note.FXNotebook;
 import org.kore.kolab.notes.fx.persistence.PersistenceManager;
 
@@ -37,7 +39,21 @@ public class TagRepository {
         return Collections.unmodifiableList(em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getResultList());
     }
     
+    public Optional<FXTag> getTag(String accountId, String summary){
+        try{
+            return Optional.of(em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getSingleResult());
+        }catch(NoResultException e){
+            return Optional.empty();
+        }
+    }
+    
     public void createTag(FXTag tag){
+        Optional<FXTag> toCheck = getTag(tag.getAccountId(), tag.getSummary());
+        
+        if(toCheck.isPresent()){
+            return;
+        }
+        
         em.getTransaction().begin();
         em.persist(tag);
         em.getTransaction().commit();

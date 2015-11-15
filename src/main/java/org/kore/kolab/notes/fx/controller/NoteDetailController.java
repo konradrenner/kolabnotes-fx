@@ -62,6 +62,10 @@ public class NoteDetailController implements Initializable{
         });
     }
     
+    public final static void refreshView(String accountId){
+        //TODO
+    }
+    
     @FXML
     void saveNote(ActionEvent event){
         System.out.println("org.kore.kolab.notes.fx.controller.NoteDetailController.saveNote()");
