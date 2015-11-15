@@ -28,7 +28,7 @@ public class NoteOverviewController {
     
     @FXML
     private Accordion noteAccordion;
-    
+
     public final static void refreshView(String accountId){
         //TODO
     }

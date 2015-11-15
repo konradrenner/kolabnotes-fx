@@ -46,10 +46,10 @@ public class ToolbarController implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
         initAccountChoiceBox(new AccountRepository());
         
-        accountChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
+        accountChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                SELECTED_ACCOUNT = accountChoiceBox.getSelectionModel().getSelectedItem().toString();
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                SELECTED_ACCOUNT = newValue;
                 
                 MainWindowController.refreshViews(SELECTED_ACCOUNT);
             }
@@ -67,6 +67,8 @@ public class ToolbarController implements Initializable{
         });
         
         accountChoiceBox.setItems(accountNames);
+        accountChoiceBox.getSelectionModel().select(0);
+        SELECTED_ACCOUNT = accountChoiceBox.getSelectionModel().getSelectedItem().toString();
     }
     
     public final static String getSelectedAccount(){

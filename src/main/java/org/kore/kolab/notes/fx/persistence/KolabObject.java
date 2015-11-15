@@ -48,6 +48,10 @@ public class KolabObject {
     public KolabObject(String accountId, String id){
         this.id = id;
         this.accountId = accountId;
+        long currentTimeMillis = System.currentTimeMillis();
+        this.creationDate = new Timestamp(currentTimeMillis);
+        this.modificationDate = new Timestamp(currentTimeMillis);
+        this.productId = "kolabnotes-fx";
     }
     
     public KolabObject(){

@@ -28,7 +28,7 @@ public class NotebookController {
     
     @FXML
     private VBox notebookBox;
-    
+
     public final static void refreshView(String accountId){
         //TODO
     }
