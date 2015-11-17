@@ -35,6 +35,10 @@ public class NoteRepository {
     public List<FXNotebook> getNotebooks(String accountId){
         return Collections.unmodifiableList(em.createNamedQuery("FXNotebook.findWithDeletedFlag", FXNotebook.class).setParameter("accountId", accountId).setParameter("deleted", false).getResultList());
     }
+
+    public FXNotebook getNotebookBySummary(String accountId, String summary) {
+        return em.createNamedQuery("FXNotebook.findBySummary", FXNotebook.class).setParameter("accountId", accountId).setParameter("summary", summary).getSingleResult();
+    }
     
     public void createNotebook(FXNotebook notebook){
         em.getTransaction().begin();

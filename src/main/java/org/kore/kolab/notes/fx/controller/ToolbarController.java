@@ -28,7 +28,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import org.kore.kolab.notes.fx.domain.account.Account;
-import org.kore.kolab.notes.fx.domain.tag.AccountRepository;
+import org.kore.kolab.notes.fx.domain.account.AccountRepository;
 
 /**
  * FXML Controller class

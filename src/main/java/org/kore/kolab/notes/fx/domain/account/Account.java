@@ -66,6 +66,9 @@ public class Account implements Serializable {
     
     @Enumerated(EnumType.STRING)
     private SyncIntervallType syncIntervallType;
+
+    @Column(nullable = false)
+    private boolean isActive;
     
     public Account(String id) {
         this.id = id;
@@ -81,6 +84,14 @@ public class Account implements Serializable {
 
     public String getEmail() {
         return email;
+    }
+
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     public void setEmail(String email) {
@@ -174,7 +185,6 @@ public class Account implements Serializable {
 
     @Override
     public String toString() {
-        return "org.kore.kolab.notes.fx.domain.Account[ id=" + id + " ]";
+        return "Account{" + "id=" + id + ", email=" + email + ", rootFolder=" + rootFolder + ", password=" + password + ", syncIntervall=" + syncIntervall + ", syncSharedFolders=" + syncSharedFolders + ", sslEnabled=" + sslEnabled + ", accountType=" + accountType + ", enableKolabExtensions=" + enableKolabExtensions + ", syncIntervallType=" + syncIntervallType + ", isActive=" + isActive + '}';
     }
-    
 }

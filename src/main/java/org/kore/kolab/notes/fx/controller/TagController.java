@@ -17,10 +17,10 @@
 package org.kore.kolab.notes.fx.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.UUID;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -43,6 +43,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import org.kore.kolab.notes.fx.domain.tag.FXTag;
+import org.kore.kolab.notes.fx.domain.tag.TagFactory;
 import org.kore.kolab.notes.fx.domain.tag.TagRepository;
 
 /**
@@ -64,11 +65,14 @@ public class TagController implements Initializable {
     public final static void refreshView(String accountId) {
         TagRepository repo = new TagRepository();
         
-        TAGS.removeAll();
-        
-        repo.getTags(accountId).stream().forEach((tag) -> {
-            TAGS.add(new Label(tag.getSummary()));
+        List<FXTag> notebooks = repo.getTags(accountId);
+
+        ArrayList<Node> tagNames = new ArrayList<>(notebooks.size());
+        notebooks.stream().forEach((tag) -> {
+            tagNames.add(new Label(tag.getSummary()));
         });
+
+        TAGS.setAll(tagNames);
     }
     
     @FXML
@@ -229,8 +233,7 @@ public class TagController implements Initializable {
             }
 
             TagRepository repo = new TagRepository();
-            FXTag fxtag = new FXTag(accountId, UUID.randomUUID().toString());
-            fxtag.setSummary(name);
+            FXTag fxtag = new TagFactory(accountId).newTag(name);
             fxtag.setColor(hex);
             repo.createTag(fxtag);
         });

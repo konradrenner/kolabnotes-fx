@@ -22,10 +22,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.kore.kolab.notes.fx.controller.MainWindowController;
+import org.kore.kolab.notes.fx.controller.ToolbarController;
 import org.kore.kolab.notes.fx.domain.account.Account;
+import org.kore.kolab.notes.fx.domain.account.AccountRepository;
 import org.kore.kolab.notes.fx.domain.account.AccountType;
 import org.kore.kolab.notes.fx.domain.account.SyncIntervallType;
-import org.kore.kolab.notes.fx.domain.tag.AccountRepository;
 
 /**
  *
@@ -45,6 +47,8 @@ public class KolabnotesFx extends Application {
         stage.setTitle("kolabnotes-fx");
         stage.setMaximized(true);
         stage.show();
+        
+        MainWindowController.refreshViews(ToolbarController.getSelectedAccount());
     }
 
     /**
