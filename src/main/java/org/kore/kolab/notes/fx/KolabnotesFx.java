@@ -22,7 +22,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.kore.kolab.notes.fx.controller.MainWindowController;
 import org.kore.kolab.notes.fx.controller.ToolbarController;
 import org.kore.kolab.notes.fx.domain.account.Account;
 import org.kore.kolab.notes.fx.domain.account.AccountRepository;
@@ -34,7 +33,7 @@ import org.kore.kolab.notes.fx.domain.account.SyncIntervallType;
  * @author Konrad Renner
  */
 public class KolabnotesFx extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
         initLocalAccount(new AccountRepository());
@@ -48,7 +47,7 @@ public class KolabnotesFx extends Application {
         stage.setMaximized(true);
         stage.show();
         
-        MainWindowController.refreshViews(ToolbarController.getSelectedAccount());
+        RefreshViewBus.informListener(new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), null, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT));
     }
 
     /**

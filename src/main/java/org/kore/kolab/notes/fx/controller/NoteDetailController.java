@@ -18,22 +18,26 @@ package org.kore.kolab.notes.fx.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.HTMLEditor;
+import org.kore.kolab.notes.fx.RefreshViewBus;
 
 /**
  *
  * @author Konrad Renner
  */
-public class NoteDetailController implements Initializable{
+public class NoteDetailController implements Initializable, RefreshViewBus.RefreshListener {
     
     @FXML
     private ColorPicker noteColorPicker;
@@ -50,8 +54,12 @@ public class NoteDetailController implements Initializable{
     @FXML
     private TextField summaryTextField;
 
+    private static ObservableList<Node> TAGS;
+    private static StringProperty SUMMARY;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        subscribeToBus();
         noteClassificationChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -60,11 +68,32 @@ public class NoteDetailController implements Initializable{
             }
             
         });
+
     }
-    
-    public final static void refreshView(String accountId){
+
+    private void subscribeToBus() {
+        RefreshViewBus.subscribe(this, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT,
+                RefreshViewBus.RefreshTypes.SYNCED_ACCOUNT,
+                RefreshViewBus.RefreshTypes.NEW_ACCOUNT,
+                RefreshViewBus.RefreshTypes.DELETED_NOTEBOOK,
+                RefreshViewBus.RefreshTypes.EDITED_NOTE,
+                RefreshViewBus.RefreshTypes.NEW_NOTE,
+                RefreshViewBus.RefreshTypes.DELETED_NOTE,
+                RefreshViewBus.RefreshTypes.NEW_NOTEBOOK,
+                RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK,
+                RefreshViewBus.RefreshTypes.SELECTED_TAG);
+    }
+
+    @Override
+    public void refreshRequest(RefreshViewBus.RefreshEvent event) {
         //TODO
     }
+
+    @Override
+    public String getId() {
+        return "NoteDetailController";
+    }
+
     
     @FXML
     void saveNote(ActionEvent event){

@@ -21,11 +21,5 @@ package org.kore.kolab.notes.fx.controller;
  * @author Konrad Renner
  */
 public class MainWindowController{
-    
-    public final static void refreshViews(String accountId){
-        TagController.refreshView(accountId);
-        NotebookController.refreshView(accountId);
-        NoteOverviewController.refreshView(accountId);
-        NoteDetailController.refreshView(accountId);
-    }
+//nothing at the moment
 }

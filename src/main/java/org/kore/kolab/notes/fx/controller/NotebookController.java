@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,9 +28,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Label;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
+import org.kore.kolab.notes.fx.RefreshViewBus;
 import org.kore.kolab.notes.fx.domain.note.FXNotebook;
 import org.kore.kolab.notes.fx.domain.note.NoteFactory;
 import org.kore.kolab.notes.fx.domain.note.NoteRepository;
@@ -40,30 +43,51 @@ import org.kore.kolab.notes.fx.domain.note.NoteRepository;
  *
  * @author Konrad Renner
  */
-public class NotebookController implements Initializable {
+public class NotebookController implements Initializable, RefreshViewBus.RefreshListener {
     
     @FXML
     private VBox notebookBox;
 
-    private static ObservableList<Node> NOTEBOOKS;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        NOTEBOOKS = notebookBox.getChildren();
+        subscribeToBus();
     }
 
-    public final static void refreshView(String accountId) {
+    private void subscribeToBus() {
+        RefreshViewBus.subscribe(this, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT,
+                RefreshViewBus.RefreshTypes.SYNCED_ACCOUNT,
+                RefreshViewBus.RefreshTypes.DELETED_NOTEBOOK,
+                RefreshViewBus.RefreshTypes.NEW_NOTEBOOK,
+                RefreshViewBus.RefreshTypes.NEW_ACCOUNT);
+    }
+
+    @Override
+    public void refreshRequest(RefreshViewBus.RefreshEvent event) {
         NoteRepository repo = new NoteRepository();
-        List<FXNotebook> notebooks = repo.getNotebooks(accountId);
+        List<FXNotebook> notebooks = repo.getNotebooks(event.getActiveAccount());
 
         ArrayList<Node> nbNames = new ArrayList<>(notebooks.size());
         notebooks.stream().forEach((notebook) -> {
-            nbNames.add(new Label(notebook.getSummary()));
+            Text text = new Text(notebook.getSummary());
+            text.setTextAlignment(TextAlignment.CENTER);
+
+            Hyperlink link = new Hyperlink("select");
+            link.setOnAction(ev -> {
+                //TODO
+            });
+
+            TextFlow flow = new TextFlow(text, link);
+            nbNames.add(flow);
         });
 
-        NOTEBOOKS.setAll(nbNames);
+        notebookBox.getChildren().setAll(nbNames);
     }
-    
+
+    @Override
+    public String getId() {
+        return "NotebookController";
+    }
+
     @FXML
     void addNotebook(ActionEvent event){
         TextInputDialog dialog = new TextInputDialog();
@@ -79,7 +103,8 @@ public class NotebookController implements Initializable {
             FXNotebook notebook = new NoteFactory(ToolbarController.getSelectedAccount()).newNotebook(name);
             repo.createNotebook(notebook);
             
-            refreshView(ToolbarController.getSelectedAccount());
+            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), name, RefreshViewBus.RefreshTypes.NEW_NOTEBOOK);
+            RefreshViewBus.informListener(refreshEvent);
         });
     }
     
@@ -112,12 +137,14 @@ public class NotebookController implements Initializable {
 
         Optional<String> result = dialog.showAndWait();
         
-        result.ifPresent(name -> {
+        result.ifPresent((String name) -> {
             FXNotebook book = repo.getNotebookBySummary(ToolbarController.getSelectedAccount(), name);
             
             repo.deleteNotebook(book);
 
-            refreshView(ToolbarController.getSelectedAccount());
+            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), name, RefreshViewBus.RefreshTypes.DELETED_NOTEBOOK);
+
+            RefreshViewBus.informListener(refreshEvent);
         });
     }
 }

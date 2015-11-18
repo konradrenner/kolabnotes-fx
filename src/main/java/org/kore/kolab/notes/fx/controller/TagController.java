@@ -29,6 +29,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -41,7 +42,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.util.Pair;
+import org.kore.kolab.notes.fx.RefreshViewBus;
 import org.kore.kolab.notes.fx.domain.tag.FXTag;
 import org.kore.kolab.notes.fx.domain.tag.TagFactory;
 import org.kore.kolab.notes.fx.domain.tag.TagRepository;
@@ -50,37 +55,57 @@ import org.kore.kolab.notes.fx.domain.tag.TagRepository;
  *
  * @author Konrad Renner
  */
-public class TagController implements Initializable {
+public class TagController implements Initializable, RefreshViewBus.RefreshListener {
     
     @FXML
     private FlowPane tagPane;
     
-    private static ObservableList<Node> TAGS;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        TAGS = tagPane.getChildren();
+        subscribeToBus();
     }
 
-    public final static void refreshView(String accountId) {
+    private void subscribeToBus() {
+        RefreshViewBus.subscribe(this, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT,
+                RefreshViewBus.RefreshTypes.SYNCED_ACCOUNT,
+                RefreshViewBus.RefreshTypes.NEW_ACCOUNT,
+                RefreshViewBus.RefreshTypes.EDITED_TAG,
+                RefreshViewBus.RefreshTypes.NEW_TAG);
+    }
+
+    @Override
+    public void refreshRequest(RefreshViewBus.RefreshEvent event) {
         TagRepository repo = new TagRepository();
-        
-        List<FXTag> notebooks = repo.getTags(accountId);
+
+        List<FXTag> notebooks = repo.getTags(event.getActiveAccount());
 
         ArrayList<Node> tagNames = new ArrayList<>(notebooks.size());
         notebooks.stream().forEach((tag) -> {
-            tagNames.add(new Label(tag.getSummary()));
+
+            Text text = new Text(tag.getSummary());
+            text.setTextAlignment(TextAlignment.CENTER);
+
+            TextFlow flow = new TextFlow(text);
+            flow.setPadding(new Insets(10));
+
+            tagNames.add(flow);
         });
 
-        TAGS.setAll(tagNames);
+        tagPane.getChildren().setAll(tagNames);
     }
-    
+
+    @Override
+    public String getId() {
+        return "TagController";
+    }
+
     @FXML
     void addTag(ActionEvent event) {
         String accountId = ToolbarController.getSelectedAccount();
-        createTag(accountId);
-        
-        refreshView(accountId);
+        String uid = createTag(accountId);
+
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), uid, RefreshViewBus.RefreshTypes.NEW_TAG);
+        RefreshViewBus.informListener(refreshEvent);
     }
     
     @FXML
@@ -100,7 +125,8 @@ public class TagController implements Initializable {
             Optional<Pair<String, Color>> selection = changeTagColor(tags, accountId);
             
             selection.ifPresent(pair -> {
-                
+
+                String uid = null;
                 for (FXTag tag : tags) {
                     if (tag.getSummary().equals(pair.getKey())) {
                         if (pair.getValue().equals(Color.TRANSPARENT)) {
@@ -110,11 +136,13 @@ public class TagController implements Initializable {
                         }
                         
                         repo.updateTag(tag);
+                        uid = tag.getId();
                         break;
                     }
                 }
                 
-                refreshView(accountId);
+                RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), uid, RefreshViewBus.RefreshTypes.EDITED_TAG);
+                RefreshViewBus.informListener(refreshEvent);
             });
         }
     }
@@ -180,7 +208,7 @@ public class TagController implements Initializable {
         return dialog.showAndWait();
     }
 
-    private void createTag(String accountId) {
+    private String createTag(String accountId) {
         Dialog<Pair<String, Color>> dialog = new Dialog<>();
         dialog.setTitle("Create Tag");
         dialog.setHeaderText("Create new Tag");
@@ -221,6 +249,7 @@ public class TagController implements Initializable {
 
         Optional<Pair<String, Color>> result = dialog.showAndWait();
 
+        final StringBuilder sb = new StringBuilder();
         result.ifPresent(newTag -> {
             String name = newTag.getKey();
             Color color = newTag.getValue();
@@ -236,6 +265,10 @@ public class TagController implements Initializable {
             FXTag fxtag = new TagFactory(accountId).newTag(name);
             fxtag.setColor(hex);
             repo.createTag(fxtag);
+
+            sb.append(fxtag.getId());
         });
+
+        return sb.toString();
     }
 }

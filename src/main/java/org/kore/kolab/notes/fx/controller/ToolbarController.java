@@ -27,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
+import org.kore.kolab.notes.fx.RefreshViewBus;
 import org.kore.kolab.notes.fx.domain.account.Account;
 import org.kore.kolab.notes.fx.domain.account.AccountRepository;
 
@@ -35,13 +36,13 @@ import org.kore.kolab.notes.fx.domain.account.AccountRepository;
  *
  * @author Konrad Renner
  */
-public class ToolbarController implements Initializable{
+public class ToolbarController implements Initializable {
+
+    private static String SELECTED_ACCOUNT;
     
     @FXML
     private ChoiceBox accountChoiceBox;
     
-    private static String SELECTED_ACCOUNT;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initAccountChoiceBox(new AccountRepository());
@@ -51,7 +52,9 @@ public class ToolbarController implements Initializable{
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 SELECTED_ACCOUNT = newValue;
                 
-                MainWindowController.refreshViews(SELECTED_ACCOUNT);
+                RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT);
+
+                RefreshViewBus.informListener(refreshEvent);
             }
             
         });
