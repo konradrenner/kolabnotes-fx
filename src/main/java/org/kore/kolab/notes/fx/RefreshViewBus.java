@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import javafx.application.Platform;
 
 /**
  *
@@ -57,8 +58,11 @@ public class RefreshViewBus {
         final Set<String> alreadyInformed = new HashSet<>();
         event.getType().getListener().stream().forEach((listener) -> {
             if (!alreadyInformed.contains(listener.getId())) {
-                listener.refreshRequest(event);
-                alreadyInformed.add(listener.getId());
+                Platform.runLater(() -> {
+                    listener.refreshRequest(event);
+                    alreadyInformed.add(listener.getId());
+                });
+
             }
         });
     }

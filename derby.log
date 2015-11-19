@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Wed Nov 18 19:20:36 CET 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0151-1bd3-ae9d-000004dccba0 
+Thu Nov 19 10:21:06 CET 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0151-1f0c-1e04-000004c1cc30 
 on database directory /home/koni/Entwicklung/Java SE/kolabnotes-fx/kolabnotesfx with class loader sun.misc.Launcher$AppClassLoader@33909752 
 Loaded from file:/home/koni/Entwicklung/Java%20SE/kolabnotes-fx/target/kolabnotes-fx-1.0-SNAPSHOT.jar
 java.vendor=Oracle Corporation
