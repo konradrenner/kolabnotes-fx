@@ -39,6 +39,7 @@ import org.kore.kolab.notes.fx.persistence.KolabObject;
  */
 @NamedQueries({
     @NamedQuery(name = "FXNote.findAll", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId ORDER BY note.summary"),
+    @NamedQuery(name = "FXNote.findWithUID", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId AND note.id = :uid"),
     @NamedQuery(name = "FXNote.findWithDeletedFlag", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId AND note.deleted = :deleted ORDER BY note.summary"),
     @NamedQuery(name = "FXNote.findAllModified", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId AND note.modificationDate < :modificationDate ORDER BY note.summary")
 })

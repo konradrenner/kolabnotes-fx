@@ -32,6 +32,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.HTMLEditor;
 import org.kore.kolab.notes.fx.RefreshViewBus;
+import org.kore.kolab.notes.fx.domain.note.FXNote;
+import org.kore.kolab.notes.fx.domain.note.NoteRepository;
 
 /**
  *
@@ -81,12 +83,34 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
                 RefreshViewBus.RefreshTypes.DELETED_NOTE,
                 RefreshViewBus.RefreshTypes.NEW_NOTEBOOK,
                 RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK,
+                RefreshViewBus.RefreshTypes.SELECTED_NOTE,
                 RefreshViewBus.RefreshTypes.SELECTED_TAG);
     }
 
     @Override
     public void refreshRequest(RefreshViewBus.RefreshEvent event) {
+        switch (event.getType()) {
+            case NEW_NOTE:
+                setValues(event.getActiveAccount(), event.getObjectId());
+                break;
+            case SELECTED_NOTE:
+                setValues(event.getActiveAccount(), event.getObjectId());
+                break;
+            default:
+                setEmpty();
+                break;
+        }
+    }
+
+    private void setEmpty() {
         //TODO
+    }
+
+    private void setValues(String accountId, String noteUID) {
+        //TODO
+        NoteRepository repo = new NoteRepository();
+        FXNote note = repo.getNote(accountId, noteUID);
+        this.summaryTextField.setText(note.getSummary());
     }
 
     @Override

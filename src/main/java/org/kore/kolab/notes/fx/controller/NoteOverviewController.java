@@ -17,12 +17,20 @@
 package org.kore.kolab.notes.fx.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
 import org.kore.kolab.notes.fx.RefreshViewBus;
+import org.kore.kolab.notes.fx.domain.note.FXNote;
+import org.kore.kolab.notes.fx.domain.note.FXNotebook;
 import org.kore.kolab.notes.fx.domain.note.NoteFactory;
 import org.kore.kolab.notes.fx.domain.note.NoteRepository;
 
@@ -53,7 +61,26 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
 
     @Override
     public void refreshRequest(RefreshViewBus.RefreshEvent event) {
-        //TODO
+        NoteRepository repo = new NoteRepository();
+        List<FXNote> notes;
+        if (event.getType() == RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK && event.getObjectId() != null) {
+            notes = repo.getNotebookBySummary(event.getActiveAccount(), event.getObjectId()).getNotes();
+        } else {
+            List<FXNotebook> notebooks = repo.getNotebooks(event.getActiveAccount());
+
+            notes = new ArrayList<>();
+            notebooks.stream().forEach((book) -> {
+                notes.addAll(book.getNotes());
+            });
+        }
+
+        ObservableList<TitledPane> titeledPanes = FXCollections.observableArrayList();
+
+        notes.stream().forEach((note) -> {
+            titeledPanes.add(createNoteView(note));
+        });
+
+        this.noteAccordion.getPanes().setAll(titeledPanes);
     }
 
     @Override
@@ -67,14 +94,22 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         String selectedAccount = ToolbarController.getSelectedAccount();
         
         NoteRepository repo = new NoteRepository();
-        repo.createNote(new NoteFactory(selectedAccount).newNote("New Note"));
+        FXNote newNote = new NoteFactory(selectedAccount).newNote("New Note");
+        repo.createNote(newNote);
 
-        //TODO refresh view
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), newNote.getId(), RefreshViewBus.RefreshTypes.NEW_NOTE);
+        RefreshViewBus.informListener(refreshEvent);
     }
     
     @FXML
     void deleteNote(ActionEvent event){
         System.out.println("org.kore.kolab.notes.fx.controller.NoteOverviewController.deleteNote()");
         //TODO
+    }
+
+    private TitledPane createNoteView(FXNote note) {
+        Label label = new Label(note.getDescription());
+
+        return new TitledPane(note.getSummary(), label);
     }
 }
