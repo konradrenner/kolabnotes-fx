@@ -18,14 +18,9 @@ package org.kore.kolab.notes.fx.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
@@ -56,21 +51,11 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     @FXML
     private TextField summaryTextField;
 
-    private static ObservableList<Node> TAGS;
-    private static StringProperty SUMMARY;
+    private String noteUID;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
-        noteClassificationChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                System.out.println(".changed()");
-                //TODO
-            }
-            
-        });
-
     }
 
     private void subscribeToBus() {
@@ -104,12 +89,14 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
 
     private void setEmpty() {
         //TODO
+        noteUID = null;
     }
 
     private void setValues(String noteUID) {
         //TODO
+        this.noteUID = noteUID;
         NoteRepository repo = new NoteRepository();
-        FXNote note = repo.getNote(noteUID);
+        FXNote note = repo.getNote(this.noteUID);
         this.summaryTextField.setText(note.getSummary());
     }
 
