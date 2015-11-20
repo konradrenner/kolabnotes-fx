@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -121,6 +123,28 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     private TitledPane createNoteView(FXNote note) {
         Label label = new Label(note.getDescription());
 
-        return new TitledPane(note.getSummary(), label);
+        TitledPane titledPane = new TitledPane(note.getSummary(), label);
+        titledPane.setPrefWidth(this.noteAccordion.getPrefWidth());
+        titledPane.expandedProperty().addListener(new NoteSelectionListener(note.getId()));
+
+        return titledPane;
+    }
+
+    class NoteSelectionListener implements ChangeListener<Boolean> {
+
+        private final String noteUID;
+
+        public NoteSelectionListener(String noteUID) {
+            this.noteUID = noteUID;
+        }
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if (newValue) {
+                RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), noteUID, RefreshViewBus.RefreshTypes.SELECTED_NOTE);
+                RefreshViewBus.informListener(refreshEvent);
+            }
+        }
+
     }
 }
