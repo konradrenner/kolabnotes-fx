@@ -43,7 +43,7 @@ public class NoteFactory {
         return nb;
     }
     
-    public FXNote newNote(String name) {
+    public FXNote newNote(String name, FXNotebook book) {
         long akttime = System.currentTimeMillis();
         FXNote note = new FXNote(accountId, UUID.randomUUID().toString());
         note.setSummary(name);
@@ -51,6 +51,7 @@ public class NoteFactory {
         note.setModificationDate(new Timestamp(akttime));
         note.setProductId("kolabnotes-fx");
         note.setClassification(Note.Classification.PUBLIC);
+        note.setNotebook(book);
         
         return note;
     }

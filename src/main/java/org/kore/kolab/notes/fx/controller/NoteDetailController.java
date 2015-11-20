@@ -91,10 +91,10 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     public void refreshRequest(RefreshViewBus.RefreshEvent event) {
         switch (event.getType()) {
             case NEW_NOTE:
-                setValues(event.getActiveAccount(), event.getObjectId());
+                setValues(event.getObjectId());
                 break;
             case SELECTED_NOTE:
-                setValues(event.getActiveAccount(), event.getObjectId());
+                setValues(event.getObjectId());
                 break;
             default:
                 setEmpty();
@@ -106,10 +106,10 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
         //TODO
     }
 
-    private void setValues(String accountId, String noteUID) {
+    private void setValues(String noteUID) {
         //TODO
         NoteRepository repo = new NoteRepository();
-        FXNote note = repo.getNote(accountId, noteUID);
+        FXNote note = repo.getNote(noteUID);
         this.summaryTextField.setText(note.getSummary());
     }
 

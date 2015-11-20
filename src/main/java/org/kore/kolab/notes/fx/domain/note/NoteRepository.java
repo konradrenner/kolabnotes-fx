@@ -40,8 +40,12 @@ public class NoteRepository {
         return em.createNamedQuery("FXNotebook.findBySummary", FXNotebook.class).setParameter("accountId", accountId).setParameter("summary", summary).getSingleResult();
     }
 
-    public FXNote getNote(String accountId, String uid) {
-        return em.createNamedQuery("FXNote.findWithUID", FXNote.class).setParameter("uid", uid).setParameter("accountId", accountId).getSingleResult();
+    public FXNotebook getNotebook(String uid) {
+        return em.find(FXNotebook.class, uid);
+    }
+
+    public FXNote getNote(String uid) {
+        return em.find(FXNote.class, uid);
     }
     
     public void createNotebook(FXNotebook notebook){

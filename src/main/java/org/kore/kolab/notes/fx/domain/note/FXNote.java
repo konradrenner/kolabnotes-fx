@@ -17,6 +17,7 @@
 package org.kore.kolab.notes.fx.domain.note;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,7 +40,6 @@ import org.kore.kolab.notes.fx.persistence.KolabObject;
  */
 @NamedQueries({
     @NamedQuery(name = "FXNote.findAll", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId ORDER BY note.summary"),
-    @NamedQuery(name = "FXNote.findWithUID", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId AND note.id = :uid"),
     @NamedQuery(name = "FXNote.findWithDeletedFlag", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId AND note.deleted = :deleted ORDER BY note.summary"),
     @NamedQuery(name = "FXNote.findAllModified", query = "SELECT note FROM FXNote note WHERE note.accountId = :accountId AND note.modificationDate < :modificationDate ORDER BY note.summary")
 })
@@ -116,11 +116,29 @@ public class FXNote extends KolabObject implements Serializable {
         return notebook;
     }
 
+    public void setNotebook(FXNotebook notebook) {
+        this.notebook = notebook;
+    }
 
     public List<FXTag> getTags() {
         return tags;
     }
+    
+    public void attachTags(FXTag... tags) {
+        attachTags(Arrays.asList(tags));
+    }
+    
+    public void attachTags(List<FXTag> tags) {
+        this.tags.addAll(tags);
+    }
 
+    public void removeTags(FXTag... tags) {
+        attachTags(Arrays.asList(tags));
+    }
+
+    public void removeTags(List<FXTag> tags) {
+        this.tags.addAll(tags);
+    }
 
     @Override
     public int hashCode() {

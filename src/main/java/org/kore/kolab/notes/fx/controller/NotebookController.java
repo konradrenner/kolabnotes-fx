@@ -73,7 +73,8 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
 
             Hyperlink link = new Hyperlink("select");
             link.setOnAction(ev -> {
-                //TODO
+                RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), notebook.getId(), RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK);
+                RefreshViewBus.informListener(refreshEvent);
             });
 
             TextFlow flow = new TextFlow(text, link);
@@ -103,7 +104,7 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
             FXNotebook notebook = new NoteFactory(ToolbarController.getSelectedAccount()).newNotebook(name);
             repo.createNotebook(notebook);
             
-            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), name, RefreshViewBus.RefreshTypes.NEW_NOTEBOOK);
+            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), notebook.getId(), RefreshViewBus.RefreshTypes.NEW_NOTEBOOK);
             RefreshViewBus.informListener(refreshEvent);
         });
     }
@@ -142,7 +143,7 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
             
             repo.deleteNotebook(book);
 
-            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), name, RefreshViewBus.RefreshTypes.DELETED_NOTEBOOK);
+            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), book.getId(), RefreshViewBus.RefreshTypes.DELETED_NOTEBOOK);
 
             RefreshViewBus.informListener(refreshEvent);
         });

@@ -42,7 +42,9 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     
     @FXML
     private Accordion noteAccordion;
-    
+
+    private String notebookId;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
@@ -64,8 +66,12 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         NoteRepository repo = new NoteRepository();
         List<FXNote> notes;
         if (event.getType() == RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK && event.getObjectId() != null) {
-            notes = repo.getNotebookBySummary(event.getActiveAccount(), event.getObjectId()).getNotes();
+            notebookId = event.getObjectId();
+            notes = repo.getNotebook(notebookId).getNotes();
+        } else if (event.getType() == RefreshViewBus.RefreshTypes.NEW_NOTE) {
+            notes = repo.getNotebook(notebookId).getNotes();
         } else {
+            notebookId = null;
             List<FXNotebook> notebooks = repo.getNotebooks(event.getActiveAccount());
 
             notes = new ArrayList<>();
@@ -91,10 +97,15 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     private
     @FXML
     void addNote(ActionEvent event) {
+        if (notebookId == null) {
+            //TODO select notebook
+            return;
+        }
+
         String selectedAccount = ToolbarController.getSelectedAccount();
         
         NoteRepository repo = new NoteRepository();
-        FXNote newNote = new NoteFactory(selectedAccount).newNote("New Note");
+        FXNote newNote = new NoteFactory(selectedAccount).newNote("New Note", repo.getNotebook(notebookId));
         repo.createNote(newNote);
 
         RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), newNote.getId(), RefreshViewBus.RefreshTypes.NEW_NOTE);
