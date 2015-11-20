@@ -7,10 +7,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40" fx:controller="org.kore.kolab.notes.fx.controller.NotebookController">
+<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.NotebookController">
     <bottom>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <buttons>
+            <Button fx:id="showAllNotesButton" mnemonicParsing="false" onAction="#showAllNotes" text="Show all notes" />
             <Button mnemonicParsing="false" onAction="#addNotebook" text="Add" />
               <Button mnemonicParsing="false" onAction="#deleteNotebook" text="Delete" />
           </buttons>

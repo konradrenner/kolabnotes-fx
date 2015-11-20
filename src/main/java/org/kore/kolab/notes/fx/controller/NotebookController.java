@@ -90,6 +90,12 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
     }
 
     @FXML
+    void showAllNotes(ActionEvent event) {
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), null, RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK);
+        RefreshViewBus.informListener(refreshEvent);
+    }
+
+    @FXML
     void addNotebook(ActionEvent event){
         TextInputDialog dialog = new TextInputDialog();
         dialog.setHeaderText("Create a new notebook");

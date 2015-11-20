@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -82,7 +80,7 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
             });
         }
 
-        ObservableList<TitledPane> titeledPanes = FXCollections.observableArrayList();
+        ArrayList<TitledPane> titeledPanes = new ArrayList<>(notes.size());
 
         notes.stream().forEach((note) -> {
             titeledPanes.add(createNoteView(note));
