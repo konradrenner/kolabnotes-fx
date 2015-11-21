@@ -16,12 +16,12 @@
  */
 package org.kore.kolab.notes.fx.domain.tag;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import org.kore.kolab.notes.fx.domain.note.FXNotebook;
 import org.kore.kolab.notes.fx.persistence.PersistenceManager;
 
 /**
@@ -62,6 +62,8 @@ public class TagRepository {
     
     public void updateTag(FXTag tag){
         em.getTransaction().begin();
+        tag.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        tag.setProductId("kolabnotes-fx");
         em.merge(tag);
         em.getTransaction().commit();
         em.close();

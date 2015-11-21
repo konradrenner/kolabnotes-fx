@@ -16,6 +16,7 @@
  */
 package org.kore.kolab.notes.fx.domain.note;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -64,6 +65,8 @@ public class NoteRepository {
     
     public void updateNotebook(FXNotebook notebook){
         em.getTransaction().begin();
+        notebook.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        notebook.setProductId("kolabnotes-fx");
         em.merge(notebook);
         em.getTransaction().commit();
         em.close();
@@ -71,6 +74,8 @@ public class NoteRepository {
     
     public void updateNote(FXNote note){
         em.getTransaction().begin();
+        note.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        note.setProductId("kolabnotes-fx");
         em.merge(note);
         em.getTransaction().commit();
         em.close();
