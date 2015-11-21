@@ -37,6 +37,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
@@ -84,11 +85,21 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
 
             Text text = new Text(tag.getSummary());
             text.setTextAlignment(TextAlignment.CENTER);
-
+            if (tag.getColor() != null) {
+                text.setFill(Color.web(tag.getColor()));
+            }
+            
             TextFlow flow = new TextFlow(text);
             flow.setPadding(new Insets(10));
 
+            Hyperlink link = new Hyperlink("select");
+            link.setOnAction(ev -> {
+                RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), tag.getId(), RefreshViewBus.RefreshTypes.SELECTED_TAG);
+                RefreshViewBus.informListener(refreshEvent);
+            });
+
             tagNames.add(flow);
+            tagNames.add(link);
         });
 
         tagPane.getChildren().setAll(tagNames);
@@ -174,9 +185,6 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
         grid.add(tagsForSelection, 1, 0);
         grid.add(new Label(""), 0, 1);
         grid.add(colorPicker, 1, 1);
-
-        Node loginButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
-        loginButton.setDisable(true);
 
         dialog.getDialogPane().setContent(grid);
 

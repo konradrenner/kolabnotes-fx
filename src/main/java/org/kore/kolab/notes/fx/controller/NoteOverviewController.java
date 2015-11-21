@@ -28,11 +28,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import org.kore.kolab.notes.fx.RefreshViewBus;
 import org.kore.kolab.notes.fx.domain.note.FXNote;
 import org.kore.kolab.notes.fx.domain.note.FXNotebook;
 import org.kore.kolab.notes.fx.domain.note.NoteFactory;
 import org.kore.kolab.notes.fx.domain.note.NoteRepository;
+import org.kore.kolab.notes.fx.domain.tag.TagRepository;
 
 /**
  *
@@ -68,6 +71,13 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         if (event.getType() == RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK && event.getObjectId() != null) {
             notebookId = event.getObjectId();
             notes = repo.getNotebook(notebookId).getNotes();
+        } else if (event.getType() == RefreshViewBus.RefreshTypes.EDITED_NOTE) {
+            FXNotebook notebook = repo.getNote(event.getObjectId()).getNotebook();
+            notebookId = notebook.getId();
+            notes = notebook.getNotes();
+        } else if (event.getType() == RefreshViewBus.RefreshTypes.SELECTED_TAG) {
+            notebookId = null;
+            notes = new TagRepository().getTag(event.getObjectId()).getNotes();
         } else if (event.getType() == RefreshViewBus.RefreshTypes.NEW_NOTE) {
             notes = repo.getNotebook(notebookId).getNotes();
         } else {
@@ -119,10 +129,15 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     }
 
     private TitledPane createNoteView(FXNote note) {
-        Label label = new Label(note.getDescription());
+        GridPane gridpane = new GridPane();
+        gridpane.add(new Label("Product-ID"), 1, 1);
+        gridpane.add(new Text(note.getProductId()), 2, 1);
+        gridpane.add(new Label("Creation date"), 1, 2);
+        gridpane.add(new Text(note.getCreationDate().toString()), 2, 2);
+        gridpane.add(new Label("Modification date"), 1, 3);
+        gridpane.add(new Text(note.getModificationDate().toString()), 2, 3);
 
-        TitledPane titledPane = new TitledPane(note.getSummary(), label);
-        titledPane.setPrefWidth(this.noteAccordion.getPrefWidth());
+        TitledPane titledPane = new TitledPane(note.getSummary(), gridpane);
         titledPane.expandedProperty().addListener(new NoteSelectionListener(note.getId()));
 
         return titledPane;

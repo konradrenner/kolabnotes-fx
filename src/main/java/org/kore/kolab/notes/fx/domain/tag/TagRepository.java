@@ -39,16 +39,20 @@ public class TagRepository {
         return Collections.unmodifiableList(em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getResultList());
     }
     
-    public Optional<FXTag> getTag(String accountId, String summary){
+    public Optional<FXTag> getTagByName(String accountId, String summary) {
         try{
             return Optional.of(em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getSingleResult());
         }catch(NoResultException e){
             return Optional.empty();
         }
     }
+
+    public FXTag getTag(String uid) {
+        return em.find(FXTag.class, uid);
+    }
     
     public void createTag(FXTag tag){
-        Optional<FXTag> toCheck = getTag(tag.getAccountId(), tag.getSummary());
+        Optional<FXTag> toCheck = getTagByName(tag.getAccountId(), tag.getSummary());
         
         if(toCheck.isPresent()){
             return;
