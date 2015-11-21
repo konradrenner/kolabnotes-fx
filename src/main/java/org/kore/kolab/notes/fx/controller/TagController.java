@@ -159,6 +159,10 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
     }
 
     private Optional<Pair<String, Color>> changeTagColor(final List<FXTag> tags, String accountId) {
+        if (tags.isEmpty()) {
+            return Optional.empty();
+        }
+
         ChoiceBox tagsForSelection = new ChoiceBox();
         
         ObservableList<String> observableTags = FXCollections.observableArrayList();
@@ -179,7 +183,14 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
         grid.setVgap(10);
         grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
 
-        final ColorPicker colorPicker = new ColorPicker(Color.TRANSPARENT);
+        Color initColor;
+        if (tags.get(0).getColor() == null) {
+            initColor = Color.TRANSPARENT;
+        } else {
+            initColor = Color.web(tags.get(0).getColor());
+        }
+
+        final ColorPicker colorPicker = new ColorPicker(initColor);
 
         grid.add(new Label("Name:"), 0, 0);
         grid.add(tagsForSelection, 1, 0);

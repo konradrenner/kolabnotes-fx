@@ -183,6 +183,9 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
         }
         
         repo.updateNote(note);
+
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), note.getId(), RefreshViewBus.RefreshTypes.EDITED_NOTE);
+        RefreshViewBus.informListener(refreshEvent);
     }
     
     @FXML
@@ -236,8 +239,17 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     }
     
     @FXML
-    void changeColor(ActionEvent event){
-        //nothing at the moment
+    void deleteNote(ActionEvent event) {
+        if (noteUID == null) {
+            return;
+        }
+
+        NoteRepository noteRepository = new NoteRepository();
+        FXNote note = noteRepository.getNote(noteUID);
+        noteRepository.deleteNote(note);
+
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), note.getId(), RefreshViewBus.RefreshTypes.DELETED_NOTE);
+        RefreshViewBus.informListener(refreshEvent);
     }
 
     private VBox createCheckBoxesForEditTags(TagRepository tagRepo, List<FXTag> selectedTags) {
@@ -248,6 +260,7 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
 
         for (int i = 0; i < tags.size(); i++) {
             CheckBox box = new CheckBox(tags.get(i).getSummary());
+            box.setPadding(new Insets(5));
             for (FXTag tag : selectedTags) {
                 if (tag.equals(tags.get(i))) {
                     box.setSelected(true);
@@ -257,7 +270,8 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
 
             nodes[i + 1] = box;
         }
-
-        return new VBox(nodes);
+        
+        VBox vBox = new VBox(nodes);
+        return vBox;
     }
 }

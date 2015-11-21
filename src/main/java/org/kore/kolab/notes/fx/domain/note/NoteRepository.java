@@ -42,7 +42,9 @@ public class NoteRepository {
     }
 
     public FXNotebook getNotebook(String uid) {
-        return em.find(FXNotebook.class, uid);
+        FXNotebook book = em.find(FXNotebook.class, uid);
+        em.refresh(book);
+        return book;
     }
 
     public FXNote getNote(String uid) {

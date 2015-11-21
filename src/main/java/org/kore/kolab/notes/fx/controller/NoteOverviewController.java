@@ -78,8 +78,19 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         } else if (event.getType() == RefreshViewBus.RefreshTypes.SELECTED_TAG) {
             notebookId = null;
             notes = new TagRepository().getTag(event.getObjectId()).getNotes();
-        } else if (event.getType() == RefreshViewBus.RefreshTypes.NEW_NOTE) {
-            notes = repo.getNotebook(notebookId).getNotes();
+        } else if (event.getType() == RefreshViewBus.RefreshTypes.NEW_NOTE
+                || event.getType() == RefreshViewBus.RefreshTypes.DELETED_NOTE
+                || event.getType() == RefreshViewBus.RefreshTypes.EDITED_NOTE) {
+            if (notebookId == null) {
+                List<FXNotebook> notebooks = repo.getNotebooks(event.getActiveAccount());
+
+                notes = new ArrayList<>();
+                notebooks.stream().forEach((book) -> {
+                    notes.addAll(book.getNotes());
+                });
+            } else {
+                notes = repo.getNotebook(notebookId).getNotes();
+            }
         } else {
             notebookId = null;
             List<FXNotebook> notebooks = repo.getNotebooks(event.getActiveAccount());
@@ -92,9 +103,9 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
 
         ArrayList<TitledPane> titeledPanes = new ArrayList<>(notes.size());
 
-        notes.stream().forEach((note) -> {
+        for (FXNote note : notes) {
             titeledPanes.add(createNoteView(note));
-        });
+        }
 
         this.noteAccordion.getPanes().setAll(titeledPanes);
     }
@@ -122,12 +133,6 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         RefreshViewBus.informListener(refreshEvent);
     }
     
-    @FXML
-    void deleteNote(ActionEvent event){
-        System.out.println("org.kore.kolab.notes.fx.controller.NoteOverviewController.deleteNote()");
-        //TODO
-    }
-
     private TitledPane createNoteView(FXNote note) {
         GridPane gridpane = new GridPane();
         gridpane.add(new Label("Product-ID"), 1, 1);

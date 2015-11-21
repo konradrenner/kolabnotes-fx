@@ -41,7 +41,7 @@ public class TagRepository {
     
     public Optional<FXTag> getTagByName(String accountId, String summary) {
         try{
-            return Optional.of(em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getSingleResult());
+            return Optional.of(em.createNamedQuery("FXTag.findBySummary", FXTag.class).setParameter("accountId", accountId).setParameter("summary", summary).getSingleResult());
         }catch(NoResultException e){
             return Optional.empty();
         }

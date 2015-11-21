@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40" fx:controller="org.kore.kolab.notes.fx.controller.NoteDetailController">
+<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.NoteDetailController">
     <center>
         <javafx.scene.web.HTMLEditor id="noteEditor" fx:id="noteEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="200.0" prefWidth="506.0" BorderPane.alignment="CENTER" />
      </center>
@@ -38,8 +38,9 @@
               <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <items>
                   <Button mnemonicParsing="false" onAction="#saveNote" text="Save" />
+                  <Button mnemonicParsing="false" onAction="#deleteNote" text="Delete" />
                     <ChoiceBox fx:id="noteClassificationChoiceBox" prefWidth="150.0" />
-                    <ColorPicker fx:id="noteColorPicker" onAction="#changeColor" />
+                    <ColorPicker fx:id="noteColorPicker" />
                 </items>
               </ToolBar>
            </center>
