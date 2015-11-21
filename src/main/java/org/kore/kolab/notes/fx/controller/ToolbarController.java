@@ -53,7 +53,6 @@ public class ToolbarController implements Initializable {
                 SELECTED_ACCOUNT = newValue;
                 
                 RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT);
-
                 RefreshViewBus.informListener(refreshEvent);
             }
             
@@ -94,5 +93,11 @@ public class ToolbarController implements Initializable {
     void syncNow(ActionEvent event){
         //TODO
         System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.syncNow()");
+    }
+
+    @FXML
+    void deleteAccount(ActionEvent event) {
+        //TODO
+        System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.deleteAccount()");
     }
 }
