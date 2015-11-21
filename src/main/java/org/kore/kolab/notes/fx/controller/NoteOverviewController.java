@@ -135,12 +135,12 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     
     private TitledPane createNoteView(FXNote note) {
         GridPane gridpane = new GridPane();
-        gridpane.add(new Label("Product-ID"), 1, 1);
-        gridpane.add(new Text(note.getProductId()), 2, 1);
-        gridpane.add(new Label("Creation date"), 1, 2);
-        gridpane.add(new Text(note.getCreationDate().toString()), 2, 2);
-        gridpane.add(new Label("Modification date"), 1, 3);
-        gridpane.add(new Text(note.getModificationDate().toString()), 2, 3);
+        gridpane.add(new Label("Product-ID"), 1, 0);
+        gridpane.add(new Text(note.getProductId()), 2, 0);
+        gridpane.add(new Label("Creation date"), 1, 1);
+        gridpane.add(new Text(note.getCreationDate().toString()), 2, 1);
+        gridpane.add(new Label("Modification date"), 1, 2);
+        gridpane.add(new Text(note.getModificationDate().toString()), 2, 2);
 
         TitledPane titledPane = new TitledPane(note.getSummary(), gridpane);
         titledPane.expandedProperty().addListener(new NoteSelectionListener(note.getId()));

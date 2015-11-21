@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
-import org.kore.kolab.notes.fx.domain.account.Account;
 import org.kore.kolab.notes.fx.persistence.PersistenceManager;
 
 /**

@@ -18,7 +18,9 @@ package org.kore.kolab.notes.fx.controller;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -26,17 +28,31 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.util.Pair;
 import org.kore.kolab.notes.fx.RefreshViewBus;
 import org.kore.kolab.notes.fx.domain.account.Account;
 import org.kore.kolab.notes.fx.domain.account.AccountRepository;
+import org.kore.kolab.notes.fx.domain.tag.FXTag;
+import org.kore.kolab.notes.fx.domain.tag.TagFactory;
+import org.kore.kolab.notes.fx.domain.tag.TagRepository;
 
 /**
  * FXML Controller class
  *
  * @author Konrad Renner
  */
-public class ToolbarController implements Initializable {
+public class ToolbarController implements Initializable, RefreshViewBus.RefreshListener {
 
     private static String SELECTED_ACCOUNT;
     
@@ -57,6 +73,24 @@ public class ToolbarController implements Initializable {
             }
             
         });
+
+        RefreshViewBus.subscribe(this, RefreshViewBus.RefreshTypes.NEW_ACCOUNT, RefreshViewBus.RefreshTypes.DELETED_ACCOUNT);
+    }
+
+    @Override
+    public String getId() {
+        return "ToolbarController";
+    }
+
+    @Override
+    public void refreshRequest(RefreshViewBus.RefreshEvent event) {
+        if (event.getType() == RefreshViewBus.RefreshTypes.NEW_ACCOUNT) {
+            accountChoiceBox.getItems().add(event.getObjectId());
+            accountChoiceBox.getSelectionModel().select(event.getObjectId());
+        } else if (event.getType() == RefreshViewBus.RefreshTypes.DELETED_ACCOUNT) {
+            accountChoiceBox.getItems().remove(event.getObjectId());
+            accountChoiceBox.getSelectionModel().select(0);
+        }
     }
 
     void initAccountChoiceBox(AccountRepository repository){
@@ -79,25 +113,153 @@ public class ToolbarController implements Initializable {
     
     @FXML
     void createAccount(ActionEvent event){
-        //TODO
-        System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.createAccount()");
+        Dialog<Account> dialog = new Dialog<>();
+        dialog.setTitle("Create Account");
+        dialog.setHeaderText(null);
+
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+        grid.add(new Label("Account name"), 0, 0);
+        TextField accountName = new TextField();
+        grid.add(accountName, 1, 0);
+        grid.add(new Label("Root Folder"), 0, 1);
+        TextField rootFolder = new TextField();
+        grid.add(rootFolder, 1, 1);
+        grid.add(new Label("E-Mail"), 0, 2);
+        TextField mail = new TextField();
+        grid.add(mail, 1, 2);
+        grid.add(new Label("Password"), 0, 3);
+        PasswordField password = new PasswordField();
+        grid.add(password, 1, 3);
+        CheckBox kolab = new CheckBox("Enable Kolabextensions");
+        grid.add(kolab, 0, 4);
+        CheckBox ssl = new CheckBox("Enable SSL");
+        grid.add(ssl, 0, 5);
+        CheckBox sharedFolders = new CheckBox("Enable Shared folders");
+        grid.add(sharedFolders, 0, 6);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                Account newAccount = new Account(accountName.getText());
+                newAccount.setEmail(mail.getText());
+                newAccount.setEnableKolabExtensions(!kolab.isIndeterminate() && kolab.isSelected());
+                newAccount.setSslEnabled(!ssl.isIndeterminate() && ssl.isSelected());
+                newAccount.setSyncSharedFolders(!sharedFolders.isIndeterminate() && sharedFolders.isSelected());
+                newAccount.setRootFolder(rootFolder.getText());
+                newAccount.setPassword(password.getText());
+
+                return newAccount;
+            }
+            return null;
+        });
+
+        Optional<Account> newAccount = dialog.showAndWait();
+
+        if (newAccount.isPresent()) {
+            Account account = newAccount.get();
+            AccountRepository repo = new AccountRepository();
+            repo.createAccount(account);
+
+            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), account.getId(), RefreshViewBus.RefreshTypes.NEW_ACCOUNT);
+            RefreshViewBus.informListener(refreshEvent);
+        }
     }
     
     @FXML
     void editAccount(ActionEvent event){
         //TODO
         System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.editAccount()");
+
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.EDITED_ACCOUNT);
+        RefreshViewBus.informListener(refreshEvent);
     }
     
     @FXML
     void syncNow(ActionEvent event){
         //TODO
         System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.syncNow()");
+
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.SYNCED_ACCOUNT);
+        RefreshViewBus.informListener(refreshEvent);
     }
 
     @FXML
     void deleteAccount(ActionEvent event) {
         //TODO
         System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.deleteAccount()");
+
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.DELETED_ACCOUNT);
+        RefreshViewBus.informListener(refreshEvent);
+    }
+
+    private String createTag(String accountId) {
+        Dialog<Pair<String, Color>> dialog = new Dialog<>();
+        dialog.setTitle("Create Tag");
+        dialog.setHeaderText("Create new Tag");
+
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+        TextField tagname = new TextField();
+        tagname.setPromptText("Name");
+        ColorPicker colorPicker = new ColorPicker(Color.TRANSPARENT);
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(tagname, 1, 0);
+        grid.add(new Label(""), 0, 1);
+        grid.add(colorPicker, 1, 1);
+
+        Node loginButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
+        loginButton.setDisable(true);
+
+        tagname.textProperty().addListener((observable, oldValue, newValue) -> {
+            loginButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+        Platform.runLater(() -> tagname.requestFocus());
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                return new Pair<>(tagname.getText(), colorPicker.getValue());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, Color>> result = dialog.showAndWait();
+
+        final StringBuilder sb = new StringBuilder();
+        result.ifPresent(newTag -> {
+            String name = newTag.getKey();
+            Color color = newTag.getValue();
+
+            String hex;
+            if (Color.TRANSPARENT.equals(color)) {
+                hex = null;
+            } else {
+                hex = "#" + Integer.toHexString(color.hashCode());
+            }
+
+            TagRepository repo = new TagRepository();
+            FXTag fxtag = new TagFactory(accountId).newTag(name);
+            fxtag.setColor(hex);
+            repo.createTag(fxtag);
+
+            sb.append(fxtag.getId());
+        });
+
+        return sb.toString();
     }
 }
