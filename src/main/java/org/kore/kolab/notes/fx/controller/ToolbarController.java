@@ -67,7 +67,25 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 SELECTED_ACCOUNT = newValue;
-                
+
+                AccountRepository repo = new AccountRepository();
+
+                Account newAccount = repo.getAccount(newValue).get();
+                newAccount.setIsActive(true);
+
+                Optional<Account> oldOptional = repo.getAccount(oldValue);
+                Account[] accountsToUpdate;
+                if (oldOptional.isPresent()) {
+                    Account oldAccount = repo.getAccount(oldValue).get();
+                    oldAccount.setIsActive(false);
+
+                    accountsToUpdate = new Account[]{newAccount, oldAccount};
+                } else {
+                    accountsToUpdate = new Account[]{newAccount};
+                }
+
+                repo.updateAccount(accountsToUpdate);
+
                 RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT);
                 RefreshViewBus.informListener(refreshEvent);
             }
@@ -97,13 +115,19 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
         List<Account> accounts = repository.getAccounts();
         
         ObservableList<String> accountNames = FXCollections.observableArrayList();
-        
-        accounts.stream().forEach((account) -> {
+
+        int selection = 0;
+        int i = 0;
+        for (Account account : accounts) {
             accountNames.add(account.getId());
-        });
-        
+            if (account.isIsActive()) {
+                selection = i;
+            }
+            i++;
+        }
+
         accountChoiceBox.setItems(accountNames);
-        accountChoiceBox.getSelectionModel().select(0);
+        accountChoiceBox.getSelectionModel().select(selection);
         SELECTED_ACCOUNT = accountChoiceBox.getSelectionModel().getSelectedItem().toString();
     }
     
@@ -175,7 +199,6 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
     @FXML
     void editAccount(ActionEvent event){
         //TODO
-        System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.editAccount()");
 
         RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.EDITED_ACCOUNT);
         RefreshViewBus.informListener(refreshEvent);
@@ -192,10 +215,17 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
 
     @FXML
     void deleteAccount(ActionEvent event) {
-        //TODO
-        System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.deleteAccount()");
+        if ("local".equals(SELECTED_ACCOUNT.trim())) {
+            return;
+        }
 
-        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.DELETED_ACCOUNT);
+        AccountRepository repo = new AccountRepository();
+
+        Optional<Account> account = repo.getAccount(SELECTED_ACCOUNT);
+
+        repo.deleteAccount(account.get());
+
+        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), SELECTED_ACCOUNT, RefreshViewBus.RefreshTypes.DELETED_ACCOUNT);
         RefreshViewBus.informListener(refreshEvent);
     }
 

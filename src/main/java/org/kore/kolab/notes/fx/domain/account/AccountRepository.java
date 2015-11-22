@@ -33,9 +33,7 @@ public class AccountRepository {
     public AccountRepository() {
         em = PersistenceManager.createEntityManager();
     }
-    
-    
-    
+
     public List<Account> getAccounts(){
         
         return Collections.unmodifiableList(em.createNamedQuery("Account.findAll", Account.class).getResultList());
@@ -55,9 +53,11 @@ public class AccountRepository {
         em.close();
     }
     
-    public void updateAccount(Account account){
+    public void updateAccount(Account... account) {
         em.getTransaction().begin();
-        em.merge(account);
+        for (Account acc : account) {
+            em.merge(acc);
+        }
         em.getTransaction().commit();
         em.close();
     }
