@@ -39,9 +39,15 @@ public class Account implements Serializable {
 
     @Id
     private String id;
-    
+
     @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String host;
+
+    @Column(nullable = false)
+    private int port;
     
     @Column(nullable = false)
     private String rootFolder;
@@ -51,6 +57,9 @@ public class Account implements Serializable {
     
     @Column(nullable = false)
     private long syncIntervall;
+
+    @Column(nullable = false)
+    private long lastSync;
     
     @Column(nullable = false)
     private boolean syncSharedFolders;
@@ -82,8 +91,32 @@ public class Account implements Serializable {
         return id;
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public long getLastSync() {
+        return lastSync;
+    }
+
+    public void setLastSync(long lastSync) {
+        this.lastSync = lastSync;
     }
 
     public boolean isIsActive() {
@@ -185,6 +218,7 @@ public class Account implements Serializable {
 
     @Override
     public String toString() {
-        return "Account{" + "id=" + id + ", email=" + email + ", rootFolder=" + rootFolder + ", password=" + password + ", syncIntervall=" + syncIntervall + ", syncSharedFolders=" + syncSharedFolders + ", sslEnabled=" + sslEnabled + ", accountType=" + accountType + ", enableKolabExtensions=" + enableKolabExtensions + ", syncIntervallType=" + syncIntervallType + ", isActive=" + isActive + '}';
+        return "Account{" + "id=" + id + ", email=" + email + ", rootFolder=" + rootFolder + ", password=" + password + ", syncIntervall=" + syncIntervall + ", lastSync=" + lastSync + ", syncSharedFolders=" + syncSharedFolders + ", sslEnabled=" + sslEnabled + ", accountType=" + accountType + ", enableKolabExtensions=" + enableKolabExtensions + ", syncIntervallType=" + syncIntervallType + ", isActive=" + isActive + '}';
     }
+
 }

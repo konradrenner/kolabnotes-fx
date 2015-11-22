@@ -66,6 +66,7 @@ public class KolabnotesFx extends Application {
             local.setEmail("local");
             local.setPassword("local");
             local.setRootFolder("Notes");
+            local.setHost("localhost");
             local.setSyncIntervallType(SyncIntervallType.NONE);
             
             accountRepository.createAccount(local);

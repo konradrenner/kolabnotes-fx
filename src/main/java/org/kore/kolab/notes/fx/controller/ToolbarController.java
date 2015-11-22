@@ -46,6 +46,7 @@ import org.kore.kolab.notes.fx.domain.account.AccountRepository;
 import org.kore.kolab.notes.fx.domain.tag.FXTag;
 import org.kore.kolab.notes.fx.domain.tag.TagFactory;
 import org.kore.kolab.notes.fx.domain.tag.TagRepository;
+import org.kore.kolab.notes.fx.sync.SyncService;
 
 /**
  * FXML Controller class
@@ -151,21 +152,35 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
         grid.add(new Label("Account name"), 0, 0);
         TextField accountName = new TextField();
         grid.add(accountName, 1, 0);
-        grid.add(new Label("Root Folder"), 0, 1);
+
+        grid.add(new Label("Host"), 0, 1);
+        TextField host = new TextField();
+        grid.add(host, 1, 1);
+
+        grid.add(new Label("Port"), 0, 2);
+        TextField port = new TextField();
+        grid.add(port, 1, 2);
+
+        grid.add(new Label("Root Folder"), 0, 3);
         TextField rootFolder = new TextField();
-        grid.add(rootFolder, 1, 1);
-        grid.add(new Label("E-Mail"), 0, 2);
+        grid.add(rootFolder, 1, 3);
+
+        grid.add(new Label("E-Mail"), 0, 4);
         TextField mail = new TextField();
-        grid.add(mail, 1, 2);
-        grid.add(new Label("Password"), 0, 3);
+        grid.add(mail, 1, 4);
+
+        grid.add(new Label("Password"), 0, 5);
         PasswordField password = new PasswordField();
-        grid.add(password, 1, 3);
+        grid.add(password, 1, 5);
+
         CheckBox kolab = new CheckBox("Enable Kolabextensions");
-        grid.add(kolab, 0, 4);
+        grid.add(kolab, 0, 6);
+
         CheckBox ssl = new CheckBox("Enable SSL");
-        grid.add(ssl, 0, 5);
+        grid.add(ssl, 0, 7);
+
         CheckBox sharedFolders = new CheckBox("Enable Shared folders");
-        grid.add(sharedFolders, 0, 6);
+        grid.add(sharedFolders, 0, 8);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -178,6 +193,8 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
                 newAccount.setSyncSharedFolders(!sharedFolders.isIndeterminate() && sharedFolders.isSelected());
                 newAccount.setRootFolder(rootFolder.getText());
                 newAccount.setPassword(password.getText());
+                newAccount.setHost(host.getText());
+                newAccount.setPort(Integer.parseInt(port.getText()));
 
                 return newAccount;
             }
@@ -205,12 +222,12 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
     }
     
     @FXML
-    void syncNow(ActionEvent event){
-        //TODO
-        System.out.println("org.kore.kolab.notes.fx.controller.ToolbarController.syncNow()");
+    void syncNow(ActionEvent event) {
+        if ("local".equals(SELECTED_ACCOUNT.trim())) {
+            return;
+        }
 
-        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.SYNCED_ACCOUNT);
-        RefreshViewBus.informListener(refreshEvent);
+        new SyncService(new AccountRepository().getAccount(SELECTED_ACCOUNT).get()).start();
     }
 
     @FXML
@@ -292,4 +309,5 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
 
         return sb.toString();
     }
+
 }
