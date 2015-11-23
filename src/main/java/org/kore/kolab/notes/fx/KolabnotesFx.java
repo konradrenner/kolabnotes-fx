@@ -39,7 +39,7 @@ public class KolabnotesFx extends Application {
     public void start(Stage stage) throws Exception {
         initLocalAccount(new AccountRepository());
         FXMLLoader loader = new FXMLLoader();
-        loader.setResources(ResourceBundle.getBundle("bundles.messages"));
+        loader.setResources(ResourceBundle.getBundle("bundles/messages"));
         Parent root = loader.load(getClass().getResource("mainWindow.fxml"));
         
         Scene scene = new Scene(root);

@@ -12,6 +12,6 @@
           <Button mnemonicParsing="false" onAction="#createAccount" text="New Account" />
           <Button mnemonicParsing="false" onAction="#editAccount" text="Edit Account" />
       <Button mnemonicParsing="false" onAction="#deleteAccount" text="Delete Account" />
-          <Button mnemonicParsing="false" onAction="#syncNow" text="Sync now" />
+      <Button mnemonicParsing="false" onAction="#syncNow" text="%syncnow" />
         </items>
 </ToolBar>
