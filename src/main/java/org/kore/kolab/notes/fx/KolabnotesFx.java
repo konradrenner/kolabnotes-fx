@@ -17,6 +17,7 @@
 package org.kore.kolab.notes.fx;
 
 import java.util.Optional;
+import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -37,10 +38,12 @@ public class KolabnotesFx extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         initLocalAccount(new AccountRepository());
-        
-        Parent root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader();
+        loader.setResources(ResourceBundle.getBundle("bundles.messages"));
+        Parent root = loader.load(getClass().getResource("mainWindow.fxml"));
         
         Scene scene = new Scene(root);
+        scene.getStylesheets().add("styles/kolabnotesfx.css");
         
         stage.setScene(scene);
         stage.setTitle("kolabnotes-fx");
