@@ -10,8 +10,8 @@
     <bottom>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <buttons>
-            <Button mnemonicParsing="false" onAction="#addTag" text="Add" />
-              <Button mnemonicParsing="false" onAction="#chooseTagColor" text="Color" />
+              <Button mnemonicParsing="false" onAction="#addTag" text="%add" />
+              <Button mnemonicParsing="false" onAction="#chooseTagColor" text="%choosecolor" />
           </buttons>
         </ButtonBar>
      </bottom>

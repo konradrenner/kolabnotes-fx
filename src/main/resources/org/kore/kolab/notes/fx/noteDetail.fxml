@@ -14,12 +14,12 @@
      <top>
         <BorderPane BorderPane.alignment="CENTER">
            <top>
-              <TextField fx:id="summaryTextField" promptText="Summary" BorderPane.alignment="CENTER" />
+               <TextField fx:id="summaryTextField" promptText="%summary" BorderPane.alignment="CENTER" />
            </top>
            <bottom>
               <BorderPane BorderPane.alignment="CENTER">
                  <right>
-                    <Button mnemonicParsing="false" onAction="#editTags" text="Edit" BorderPane.alignment="CENTER" />
+                     <Button mnemonicParsing="false" onAction="#editTags" text="%edit" BorderPane.alignment="CENTER" />
                  </right>
                  <center>
                     <ScrollPane vbarPolicy="NEVER" BorderPane.alignment="CENTER">
@@ -37,8 +37,8 @@
            <center>
               <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <items>
-                  <Button mnemonicParsing="false" onAction="#saveNote" text="Save" />
-                  <Button mnemonicParsing="false" onAction="#deleteNote" text="Delete" />
+                    <Button mnemonicParsing="false" onAction="#saveNote" text="%save" />
+                    <Button mnemonicParsing="false" onAction="#deleteNote" text="%delete" />
                     <ChoiceBox fx:id="noteClassificationChoiceBox" prefWidth="150.0" />
                     <ColorPicker fx:id="noteColorPicker" />
                 </items>

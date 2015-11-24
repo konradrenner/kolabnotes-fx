@@ -48,9 +48,12 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
     @FXML
     private VBox notebookBox;
 
+    private ResourceBundle bundle;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
+        bundle = resources;
     }
 
     private void subscribeToBus() {
@@ -98,9 +101,9 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
     @FXML
     void addNotebook(ActionEvent event){
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Create a new notebook");
-        dialog.setTitle("Create notebook");
-        dialog.setContentText("Please enter the notebook name:");
+        dialog.setHeaderText(bundle.getString("createNotebook"));
+        dialog.setTitle(bundle.getString("createNotebook"));
+        dialog.setContentText(bundle.getString("enterNotebookName"));
 
         Optional<String> result = dialog.showAndWait();
 
@@ -123,9 +126,9 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
 
         if (notebooks.isEmpty()) {
             Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Warning");
+            alert.setTitle(bundle.getString("warning"));
             alert.setHeaderText(null);
-            alert.setContentText("No notebooks created");
+            alert.setContentText(bundle.getString("nonotebooks"));
 
             alert.showAndWait();
             return;
@@ -138,9 +141,9 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
         });
 
         ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
-        dialog.setTitle("Delete notebook");
+        dialog.setTitle(bundle.getString("deleteNotebook"));
         dialog.setHeaderText(null);
-        dialog.setContentText("Select a notebook for deletion:");
+        dialog.setContentText(bundle.getString("selectNotebookForDeletion"));
 
         Optional<String> result = dialog.showAndWait();
         

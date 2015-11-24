@@ -73,10 +73,12 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
 
     private List<FXTag> selectedTags;
 
+    private ResourceBundle bundle;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
-        
+        bundle = resources;
         noteClassificationChoiceBox.setItems(FXCollections.observableArrayList(Note.Classification.values()));
         setEmpty();
     }
@@ -195,8 +197,8 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
         }
 
         Dialog<List<FXTag>> dialog = new Dialog<>();
-        dialog.setTitle("Choose Tags");
-        dialog.setHeaderText("Choose Tags");
+        dialog.setTitle(bundle.getString("chooseTags"));
+        dialog.setHeaderText(bundle.getString("chooseTags"));
 
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -256,7 +258,7 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
         List<FXTag> tags = tagRepo.getTags(accountId);
         Node[] nodes = new Node[tags.size() + 1];
 
-        nodes[0] = new Label("Select tags:");
+        nodes[0] = new Label(bundle.getString("choose"));
 
         for (int i = 0; i < tags.size(); i++) {
             CheckBox box = new CheckBox(tags.get(i).getSummary());

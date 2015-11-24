@@ -48,9 +48,12 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
 
     private String notebookId;
 
+    private ResourceBundle bundle;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
+        bundle = resources;
     }
     
     private void subscribeToBus() {
@@ -126,7 +129,7 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         String selectedAccount = ToolbarController.getSelectedAccount();
         
         NoteRepository repo = new NoteRepository();
-        FXNote newNote = new NoteFactory(selectedAccount).newNote("New Note", repo.getNotebook(notebookId));
+        FXNote newNote = new NoteFactory(selectedAccount).newNote(bundle.getString("newnote"), repo.getNotebook(notebookId));
         repo.createNote(newNote);
 
         RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), newNote.getId(), RefreshViewBus.RefreshTypes.NEW_NOTE);
@@ -135,11 +138,11 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     
     private TitledPane createNoteView(FXNote note) {
         GridPane gridpane = new GridPane();
-        gridpane.add(new Label("Product-ID"), 1, 0);
+        gridpane.add(new Label(bundle.getString("productid")), 1, 0);
         gridpane.add(new Text(note.getProductId()), 2, 0);
-        gridpane.add(new Label("Creation date"), 1, 1);
+        gridpane.add(new Label(bundle.getString("creationDate")), 1, 1);
         gridpane.add(new Text(note.getCreationDate().toString()), 2, 1);
-        gridpane.add(new Label("Modification date"), 1, 2);
+        gridpane.add(new Label(bundle.getString("modificationDate")), 1, 2);
         gridpane.add(new Text(note.getModificationDate().toString()), 2, 2);
 
         TitledPane titledPane = new TitledPane(note.getSummary(), gridpane);

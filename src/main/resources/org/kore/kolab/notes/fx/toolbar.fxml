@@ -9,9 +9,9 @@
 <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.ToolbarController">
     <items>
           <ChoiceBox fx:id="accountChoiceBox" prefWidth="150.0" />
-          <Button mnemonicParsing="false" onAction="#createAccount" text="New Account" />
-          <Button mnemonicParsing="false" onAction="#editAccount" text="Edit Account" />
-      <Button mnemonicParsing="false" onAction="#deleteAccount" text="Delete Account" />
+          <Button mnemonicParsing="false" onAction="#createAccount" text="%newAccount" />
+          <Button mnemonicParsing="false" onAction="#editAccount" text="%editAccount" />
+          <Button mnemonicParsing="false" onAction="#deleteAccount" text="%deleteAccount" />
       <Button mnemonicParsing="false" onAction="#syncNow" text="%syncnow" />
         </items>
 </ToolBar>

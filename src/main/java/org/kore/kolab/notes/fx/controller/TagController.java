@@ -60,10 +60,13 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
     
     @FXML
     private FlowPane tagPane;
+
+    private ResourceBundle bundle;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
+        bundle = resources;
     }
 
     private void subscribeToBus() {
@@ -127,9 +130,9 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
 
         if (tags.isEmpty()) {
             Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Warning Dialog");
+            alert.setTitle(bundle.getString("warning"));
             alert.setHeaderText(null);
-            alert.setContentText("There are no tags for changing the color");
+            alert.setContentText(bundle.getString("noTagsForColorChange"));
 
             alert.showAndWait();
         } else {
@@ -173,8 +176,8 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
         tagsForSelection.getSelectionModel().select(0);
 
         Dialog<Pair<String, Color>> dialog = new Dialog<>();
-        dialog.setTitle("Choose Color");
-        dialog.setHeaderText("Choose Tag color");
+        dialog.setTitle(bundle.getString("chooseTagColor"));
+        dialog.setHeaderText(bundle.getString("chooseTagColor"));
 
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -192,7 +195,7 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
 
         final ColorPicker colorPicker = new ColorPicker(initColor);
 
-        grid.add(new Label("Name:"), 0, 0);
+        grid.add(new Label(bundle.getString("name")), 0, 0);
         grid.add(tagsForSelection, 1, 0);
         grid.add(new Label(""), 0, 1);
         grid.add(colorPicker, 1, 1);
@@ -229,8 +232,8 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
 
     private String createTag(String accountId) {
         Dialog<Pair<String, Color>> dialog = new Dialog<>();
-        dialog.setTitle("Create Tag");
-        dialog.setHeaderText("Create new Tag");
+        dialog.setTitle(bundle.getString("createTag"));
+        dialog.setHeaderText(bundle.getString("createTag"));
 
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -240,10 +243,10 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
         grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
 
         TextField tagname = new TextField();
-        tagname.setPromptText("Name");
+        tagname.setPromptText(bundle.getString("name"));
         ColorPicker colorPicker = new ColorPicker(Color.TRANSPARENT);
 
-        grid.add(new Label("Name:"), 0, 0);
+        grid.add(new Label(bundle.getString("name")), 0, 0);
         grid.add(tagname, 1, 0);
         grid.add(new Label(""), 0, 1);
         grid.add(colorPicker, 1, 1);

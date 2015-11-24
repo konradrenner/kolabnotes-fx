@@ -11,9 +11,9 @@
     <bottom>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <buttons>
-            <Button fx:id="showAllNotesButton" mnemonicParsing="false" onAction="#showAllNotes" text="Show all notes" />
-            <Button mnemonicParsing="false" onAction="#addNotebook" text="Add" />
-              <Button mnemonicParsing="false" onAction="#deleteNotebook" text="Delete" />
+              <Button fx:id="showAllNotesButton" mnemonicParsing="false" onAction="#showAllNotes" text="%showallnotes" />
+              <Button mnemonicParsing="false" onAction="#addNotebook" text="%add" />
+              <Button mnemonicParsing="false" onAction="#deleteNotebook" text="%delete" />
           </buttons>
         </ButtonBar>
      </bottom>

@@ -20,7 +20,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -28,24 +27,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.util.Pair;
 import org.kore.kolab.notes.fx.RefreshViewBus;
 import org.kore.kolab.notes.fx.domain.account.Account;
 import org.kore.kolab.notes.fx.domain.account.AccountRepository;
-import org.kore.kolab.notes.fx.domain.tag.FXTag;
-import org.kore.kolab.notes.fx.domain.tag.TagFactory;
-import org.kore.kolab.notes.fx.domain.tag.TagRepository;
 import org.kore.kolab.notes.fx.sync.SyncService;
 
 /**
@@ -60,9 +51,12 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
     @FXML
     private ChoiceBox accountChoiceBox;
     
+    private ResourceBundle bundle;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initAccountChoiceBox(new AccountRepository());
+        bundle = resources;
         
         accountChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -139,7 +133,7 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
     @FXML
     void createAccount(ActionEvent event){
         Dialog<Account> dialog = new Dialog<>();
-        dialog.setTitle("Create Account");
+        dialog.setTitle(bundle.getString("createAccount"));
         dialog.setHeaderText(null);
 
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -149,37 +143,34 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
         grid.setVgap(10);
         grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
 
-        grid.add(new Label("Account name"), 0, 0);
+        grid.add(new Label(bundle.getString("name")), 0, 0);
         TextField accountName = new TextField();
         grid.add(accountName, 1, 0);
 
-        grid.add(new Label("Host"), 0, 1);
+        grid.add(new Label(bundle.getString("host")), 0, 1);
         TextField host = new TextField();
         grid.add(host, 1, 1);
 
-        grid.add(new Label("Port"), 0, 2);
+        grid.add(new Label(bundle.getString("port")), 0, 2);
         TextField port = new TextField();
         grid.add(port, 1, 2);
 
-        grid.add(new Label("Root Folder"), 0, 3);
+        grid.add(new Label(bundle.getString("rootFolder")), 0, 3);
         TextField rootFolder = new TextField();
         grid.add(rootFolder, 1, 3);
 
-        grid.add(new Label("E-Mail"), 0, 4);
+        grid.add(new Label(bundle.getString("mail")), 0, 4);
         TextField mail = new TextField();
         grid.add(mail, 1, 4);
 
-        grid.add(new Label("Password"), 0, 5);
-        PasswordField password = new PasswordField();
-        grid.add(password, 1, 5);
-
-        CheckBox kolab = new CheckBox("Enable Kolabextensions");
+        CheckBox kolab = new CheckBox(bundle.getString("enableKolab"));
+        kolab.setSelected(true);
         grid.add(kolab, 0, 6);
 
-        CheckBox ssl = new CheckBox("Enable SSL");
+        CheckBox ssl = new CheckBox(bundle.getString("enableSSL"));
         grid.add(ssl, 0, 7);
 
-        CheckBox sharedFolders = new CheckBox("Enable Shared folders");
+        CheckBox sharedFolders = new CheckBox(bundle.getString("enableSharedFolders"));
         grid.add(sharedFolders, 0, 8);
 
         dialog.getDialogPane().setContent(grid);
@@ -192,7 +183,7 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
                 newAccount.setSslEnabled(!ssl.isIndeterminate() && ssl.isSelected());
                 newAccount.setSyncSharedFolders(!sharedFolders.isIndeterminate() && sharedFolders.isSelected());
                 newAccount.setRootFolder(rootFolder.getText());
-                newAccount.setPassword(password.getText());
+                newAccount.setPassword("");
                 newAccount.setHost(host.getText());
                 newAccount.setPort(Integer.parseInt(port.getText()));
 
@@ -245,69 +236,4 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
         RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), SELECTED_ACCOUNT, RefreshViewBus.RefreshTypes.DELETED_ACCOUNT);
         RefreshViewBus.informListener(refreshEvent);
     }
-
-    private String createTag(String accountId) {
-        Dialog<Pair<String, Color>> dialog = new Dialog<>();
-        dialog.setTitle("Create Tag");
-        dialog.setHeaderText("Create new Tag");
-
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
-
-        TextField tagname = new TextField();
-        tagname.setPromptText("Name");
-        ColorPicker colorPicker = new ColorPicker(Color.TRANSPARENT);
-
-        grid.add(new Label("Name:"), 0, 0);
-        grid.add(tagname, 1, 0);
-        grid.add(new Label(""), 0, 1);
-        grid.add(colorPicker, 1, 1);
-
-        Node loginButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
-        loginButton.setDisable(true);
-
-        tagname.textProperty().addListener((observable, oldValue, newValue) -> {
-            loginButton.setDisable(newValue.trim().isEmpty());
-        });
-
-        dialog.getDialogPane().setContent(grid);
-
-        Platform.runLater(() -> tagname.requestFocus());
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == ButtonType.OK) {
-                return new Pair<>(tagname.getText(), colorPicker.getValue());
-            }
-            return null;
-        });
-
-        Optional<Pair<String, Color>> result = dialog.showAndWait();
-
-        final StringBuilder sb = new StringBuilder();
-        result.ifPresent(newTag -> {
-            String name = newTag.getKey();
-            Color color = newTag.getValue();
-
-            String hex;
-            if (Color.TRANSPARENT.equals(color)) {
-                hex = null;
-            } else {
-                hex = "#" + Integer.toHexString(color.hashCode());
-            }
-
-            TagRepository repo = new TagRepository();
-            FXTag fxtag = new TagFactory(accountId).newTag(name);
-            fxtag.setColor(hex);
-            repo.createTag(fxtag);
-
-            sb.append(fxtag.getId());
-        });
-
-        return sb.toString();
-    }
-
 }
