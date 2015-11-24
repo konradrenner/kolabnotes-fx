@@ -17,6 +17,7 @@
 package org.kore.kolab.notes.fx.controller;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -50,10 +51,13 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
 
     private ResourceBundle bundle;
 
+    private DateFormat dateFormatter;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
         bundle = resources;
+        dateFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
     }
     
     private void subscribeToBus() {
@@ -138,16 +142,17 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     
     private TitledPane createNoteView(FXNote note) {
         GridPane gridpane = new GridPane();
-        gridpane.add(new Label(bundle.getString("productid")), 1, 0);
-        gridpane.add(new Text(note.getProductId()), 2, 0);
-        gridpane.add(new Label(bundle.getString("creationDate")), 1, 1);
-        gridpane.add(new Text(note.getCreationDate().toString()), 2, 1);
-        gridpane.add(new Label(bundle.getString("modificationDate")), 1, 2);
-        gridpane.add(new Text(note.getModificationDate().toString()), 2, 2);
+        gridpane.add(new Label(bundle.getString("notebook")), 0, 1);
+        gridpane.add(new Text(note.getNotebook().getSummary()), 1, 1);
+        gridpane.add(new Label(bundle.getString("productid")), 0, 2);
+        gridpane.add(new Text(note.getProductId()), 1, 2);
+        gridpane.add(new Label(bundle.getString("creationDate")), 0, 3);
+        gridpane.add(new Text(dateFormatter.format(note.getCreationDate())), 1, 3);
+        gridpane.add(new Label(bundle.getString("modificationDate")), 0, 4);
+        gridpane.add(new Text(dateFormatter.format(note.getModificationDate())), 1, 4);
 
         TitledPane titledPane = new TitledPane(note.getSummary(), gridpane);
         titledPane.expandedProperty().addListener(new NoteSelectionListener(note.getId()));
-
         return titledPane;
     }
 

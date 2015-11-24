@@ -27,19 +27,21 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -87,22 +89,31 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
         notebooks.stream().forEach((tag) -> {
 
             Text text = new Text(tag.getSummary());
+            text.getStyleClass().add("list_tag");
             text.setTextAlignment(TextAlignment.CENTER);
+            text.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    Parent textFlow = text.getParent();
+
+                    for (Node node : textFlow.getParent().getChildrenUnmodifiable()) {
+                        node.getStyleClass().remove("selected_tag");
+                    }
+
+                    textFlow.getStyleClass().add("selected_tag");
+
+                    RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), tag.getId(), RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK);
+                    RefreshViewBus.informListener(refreshEvent);
+                }
+
+            });
             if (tag.getColor() != null) {
                 text.setFill(Color.web(tag.getColor()));
             }
             
             TextFlow flow = new TextFlow(text);
-            flow.setPadding(new Insets(10));
-
-            Hyperlink link = new Hyperlink("select");
-            link.setOnAction(ev -> {
-                RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), tag.getId(), RefreshViewBus.RefreshTypes.SELECTED_TAG);
-                RefreshViewBus.informListener(refreshEvent);
-            });
-
+            flow.setPadding(new Insets(5));
             tagNames.add(flow);
-            tagNames.add(link);
         });
 
         tagPane.getChildren().setAll(tagNames);

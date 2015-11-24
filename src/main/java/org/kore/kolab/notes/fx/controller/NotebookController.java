@@ -22,14 +22,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -72,15 +75,27 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
         ArrayList<Node> nbNames = new ArrayList<>(notebooks.size());
         notebooks.stream().forEach((notebook) -> {
             Text text = new Text(notebook.getSummary());
+            text.getStyleClass().add("list_notebook");
             text.setTextAlignment(TextAlignment.CENTER);
+            text.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    Parent textFlow = text.getParent();
 
-            Hyperlink link = new Hyperlink("select");
-            link.setOnAction(ev -> {
-                RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), notebook.getId(), RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK);
-                RefreshViewBus.informListener(refreshEvent);
+                    for (Node node : textFlow.getParent().getChildrenUnmodifiable()) {
+                        node.getStyleClass().remove("selected_notebook");
+                    }
+
+                    textFlow.getStyleClass().add("selected_notebook");
+
+                    RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), notebook.getId(), RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK);
+                    RefreshViewBus.informListener(refreshEvent);
+                }
+
             });
 
-            TextFlow flow = new TextFlow(text, link);
+            TextFlow flow = new TextFlow(text);
+            flow.setPadding(new Insets(5));
             nbNames.add(flow);
         });
 
