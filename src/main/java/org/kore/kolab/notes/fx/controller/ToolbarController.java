@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -233,6 +234,8 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
         grid.add(new Label(bundle.getString("password")), 0, 0);
         PasswordField password = new PasswordField();
         grid.add(password, 1, 0);
+
+        Platform.runLater(() -> password.requestFocus());
 
         dialog.getDialogPane().setContent(grid);
 
