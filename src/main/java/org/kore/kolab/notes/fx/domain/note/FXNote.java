@@ -137,11 +137,11 @@ public class FXNote extends KolabObject implements Serializable {
     }
 
     public void removeTags(FXTag... tags) {
-        attachTags(Arrays.asList(tags));
+        removeTags(Arrays.asList(tags));
     }
 
     public void removeTags(List<FXTag> tags) {
-        this.tags.addAll(tags);
+        this.tags.removeAll(tags);
     }
 
     @Override

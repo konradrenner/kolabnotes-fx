@@ -124,12 +124,11 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     }
 
     private void setValues(String noteUID) {
-        //TODO
         this.noteUID = noteUID;
         NoteRepository repo = new NoteRepository();
         FXNote note = repo.getNote(this.noteUID);
         this.summaryTextField.setText(note.getSummary());
-        this.noteEditor.setHtmlText(note.getDescription());
+        this.noteEditor.setHtmlText(note.getDescription() == null ? "" : note.getDescription());
         this.noteClassificationChoiceBox.getSelectionModel().select(note.getClassification());
         
         if (note.getColor() == null) {
