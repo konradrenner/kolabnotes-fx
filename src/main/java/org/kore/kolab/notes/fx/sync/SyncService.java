@@ -121,6 +121,9 @@ public class SyncService {
 
                     imapRepository.merge();
                     updateProgress(9, 10);
+
+                    account.setLastSync(System.currentTimeMillis());
+                    entityManager.merge(account);
                     entityManager.getTransaction().commit();
                 } catch (Exception e) {
                     e.printStackTrace();
