@@ -42,6 +42,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -63,12 +64,17 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
     @FXML
     private FlowPane tagPane;
 
+    @FXML
+    private BorderPane tagRootPane;
+
     private ResourceBundle bundle;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
         bundle = resources;
+
+        tagPane.prefWidthProperty().bind(tagRootPane.widthProperty());
     }
 
     private void subscribeToBus() {
@@ -76,6 +82,7 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
                 RefreshViewBus.RefreshTypes.SYNCED_ACCOUNT,
                 RefreshViewBus.RefreshTypes.NEW_ACCOUNT,
                 RefreshViewBus.RefreshTypes.EDITED_TAG,
+                RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK,
                 RefreshViewBus.RefreshTypes.NEW_TAG);
     }
 
@@ -83,10 +90,10 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
     public void refreshRequest(RefreshViewBus.RefreshEvent event) {
         TagRepository repo = new TagRepository();
 
-        List<FXTag> notebooks = repo.getTags(event.getActiveAccount());
+        List<FXTag> tags = repo.getTags(event.getActiveAccount());
 
-        ArrayList<Node> tagNames = new ArrayList<>(notebooks.size());
-        notebooks.stream().forEach((tag) -> {
+        ArrayList<Node> tagNames = new ArrayList<>(tags.size());
+        tags.stream().forEach((tag) -> {
 
             Text text = new Text(tag.getSummary());
             text.getStyleClass().add("list_tag");
@@ -102,7 +109,7 @@ public class TagController implements Initializable, RefreshViewBus.RefreshListe
 
                     textFlow.getStyleClass().add("selected_tag");
 
-                    RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), tag.getId(), RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK);
+                    RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), tag.getId(), RefreshViewBus.RefreshTypes.SELECTED_TAG);
                     RefreshViewBus.informListener(refreshEvent);
                 }
 

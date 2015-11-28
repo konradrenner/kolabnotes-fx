@@ -32,6 +32,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import org.kore.kolab.notes.fx.RefreshViewBus;
@@ -218,7 +219,35 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
             return;
         }
 
-        new SyncService(new AccountRepository().getAccount(SELECTED_ACCOUNT).get()).start();
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle(bundle.getString("password"));
+        dialog.setHeaderText(null);
+
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+        grid.add(new Label(bundle.getString("password")), 0, 0);
+        PasswordField password = new PasswordField();
+        grid.add(password, 1, 0);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                return password.getText();
+            }
+            return null;
+        });
+
+        Optional<String> givenPassword = dialog.showAndWait();
+
+        if (givenPassword.isPresent()) {
+            new SyncService(new AccountRepository().getAccount(SELECTED_ACCOUNT).get(), givenPassword.get()).start();
+        }
     }
 
     @FXML

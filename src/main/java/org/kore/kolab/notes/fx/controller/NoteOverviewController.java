@@ -29,6 +29,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import org.kore.kolab.notes.fx.RefreshViewBus;
@@ -47,6 +48,9 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     @FXML
     private Accordion noteAccordion;
 
+    @FXML
+    private BorderPane noteRootPane;
+
     private String notebookId;
 
     private ResourceBundle bundle;
@@ -58,6 +62,8 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         subscribeToBus();
         bundle = resources;
         dateFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+
+        noteAccordion.prefWidthProperty().bind(noteRootPane.widthProperty());
     }
     
     private void subscribeToBus() {

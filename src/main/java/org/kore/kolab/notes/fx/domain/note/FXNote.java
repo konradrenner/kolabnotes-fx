@@ -17,6 +17,7 @@
 package org.kore.kolab.notes.fx.domain.note;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Column;
@@ -25,6 +26,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -51,8 +53,9 @@ public class FXNote extends KolabObject implements Serializable {
     
     @Column(nullable = false)
     private String summary;
-    
-    @Column
+
+    @Lob
+    @Column(columnDefinition = "CLOB")
     private String description;
     
     @Enumerated(EnumType.STRING)
@@ -74,6 +77,7 @@ public class FXNote extends KolabObject implements Serializable {
     
     public FXNote(String accountId, String id) {
         super(accountId, id);
+        tags = new ArrayList<>();
     }
 
     protected FXNote() {

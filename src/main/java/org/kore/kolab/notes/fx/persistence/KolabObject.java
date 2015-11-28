@@ -63,7 +63,7 @@ public class KolabObject {
     }
 
     public String getProductId() {
-        return productId;
+        return productId.trim();
     }
 
     public void setProductId(String productId) {
@@ -87,7 +87,7 @@ public class KolabObject {
     }
 
     public String getId() {
-        return id;
+        return id.trim();
     }
 
     public boolean isDeleted() {

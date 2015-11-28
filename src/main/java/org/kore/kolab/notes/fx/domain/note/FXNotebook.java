@@ -17,6 +17,7 @@
 package org.kore.kolab.notes.fx.domain.note;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,6 +53,7 @@ public class FXNotebook extends KolabObject implements Serializable {
     
     public FXNotebook(String accountId, String id) {
         super(accountId, id);
+        notes = new ArrayList<>();
     }
 
     protected FXNotebook() {
@@ -63,7 +65,7 @@ public class FXNotebook extends KolabObject implements Serializable {
     }
     
     public String getSummary() {
-        return nbsummary;
+        return nbsummary.trim();
     }
 
     public void setSummary(String summary) {

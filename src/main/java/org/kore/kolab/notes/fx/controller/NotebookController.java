@@ -33,6 +33,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -51,18 +52,24 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
     @FXML
     private VBox notebookBox;
 
+    @FXML
+    private BorderPane notebookRootPane;
+
     private ResourceBundle bundle;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToBus();
         bundle = resources;
+
+        notebookBox.prefWidthProperty().bind(notebookRootPane.widthProperty());
     }
 
     private void subscribeToBus() {
         RefreshViewBus.subscribe(this, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT,
                 RefreshViewBus.RefreshTypes.SYNCED_ACCOUNT,
                 RefreshViewBus.RefreshTypes.DELETED_NOTEBOOK,
+                RefreshViewBus.RefreshTypes.SELECTED_TAG,
                 RefreshViewBus.RefreshTypes.NEW_NOTEBOOK,
                 RefreshViewBus.RefreshTypes.NEW_ACCOUNT);
     }

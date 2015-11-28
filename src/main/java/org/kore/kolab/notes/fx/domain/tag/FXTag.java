@@ -17,6 +17,7 @@
 package org.kore.kolab.notes.fx.domain.tag;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,6 +54,7 @@ public class FXTag extends KolabObject implements Serializable {
     
     public FXTag(String accountId, String id) {
         super(accountId, id);
+        notes = new ArrayList<>();
     }
 
     protected FXTag() {
