@@ -249,7 +249,10 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
         Optional<String> givenPassword = dialog.showAndWait();
 
         if (givenPassword.isPresent()) {
-            new SyncService(new AccountRepository().getAccount(SELECTED_ACCOUNT).get(), givenPassword.get()).start();
+
+            Account account = new AccountRepository().getAccount(SELECTED_ACCOUNT).get();
+            String pw = givenPassword.get();
+            new SyncService(account, pw).start();
         }
     }
 
