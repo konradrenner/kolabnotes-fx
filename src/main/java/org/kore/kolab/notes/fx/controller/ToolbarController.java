@@ -207,11 +207,89 @@ public class ToolbarController implements Initializable, RefreshViewBus.RefreshL
     }
     
     @FXML
-    void editAccount(ActionEvent event){
-        //TODO
+    void editAccount(ActionEvent event) {
+        if (SELECTED_ACCOUNT.equals("local")) {
+            return;
+        }
 
-        RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.EDITED_ACCOUNT);
-        RefreshViewBus.informListener(refreshEvent);
+        AccountRepository repo = new AccountRepository();
+        Account selectedAccount = repo.getAccount(SELECTED_ACCOUNT).get();
+
+        Dialog<Account> dialog = new Dialog<>();
+        dialog.setTitle(bundle.getString("createAccount"));
+        dialog.setHeaderText(null);
+
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+        grid.add(new Label(bundle.getString("name")), 0, 0);
+        TextField accountName = new TextField();
+        accountName.setText(selectedAccount.getId());
+        grid.add(accountName, 1, 0);
+
+        grid.add(new Label(bundle.getString("host")), 0, 1);
+        TextField host = new TextField();
+        host.setText(selectedAccount.getHost());
+        grid.add(host, 1, 1);
+
+        grid.add(new Label(bundle.getString("port")), 0, 2);
+        TextField port = new TextField();
+        port.setText(Integer.toString(selectedAccount.getPort()));
+        grid.add(port, 1, 2);
+
+        grid.add(new Label(bundle.getString("rootFolder")), 0, 3);
+        TextField rootFolder = new TextField();
+        rootFolder.setText(selectedAccount.getRootFolder());
+        grid.add(rootFolder, 1, 3);
+
+        grid.add(new Label(bundle.getString("mail")), 0, 4);
+        TextField mail = new TextField();
+        mail.setText(selectedAccount.getEmail());
+        grid.add(mail, 1, 4);
+
+        CheckBox kolab = new CheckBox(bundle.getString("enableKolab"));
+        kolab.setSelected(selectedAccount.isEnableKolabExtensions());
+        grid.add(kolab, 0, 6);
+
+        CheckBox ssl = new CheckBox(bundle.getString("enableSSL"));
+        ssl.setSelected(selectedAccount.isSslEnabled());
+        grid.add(ssl, 0, 7);
+
+        CheckBox sharedFolders = new CheckBox(bundle.getString("enableSharedFolders"));
+        sharedFolders.setSelected(selectedAccount.isSyncSharedFolders());
+        grid.add(sharedFolders, 0, 8);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                selectedAccount.setEmail(mail.getText());
+                selectedAccount.setEnableKolabExtensions(!kolab.isIndeterminate() && kolab.isSelected());
+                selectedAccount.setSslEnabled(!ssl.isIndeterminate() && ssl.isSelected());
+                selectedAccount.setSyncSharedFolders(!sharedFolders.isIndeterminate() && sharedFolders.isSelected());
+                selectedAccount.setRootFolder(rootFolder.getText());
+                selectedAccount.setPassword("");
+                selectedAccount.setHost(host.getText());
+                selectedAccount.setPort(Integer.parseInt(port.getText()));
+
+                return selectedAccount;
+            }
+            return null;
+        });
+
+        Optional<Account> newAccount = dialog.showAndWait();
+
+        if (newAccount.isPresent()) {
+            Account account = newAccount.get();
+            repo.updateAccount(account);
+
+            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(getSelectedAccount(), null, RefreshViewBus.RefreshTypes.EDITED_ACCOUNT);
+            RefreshViewBus.informListener(refreshEvent);
+        }
     }
     
     @FXML
