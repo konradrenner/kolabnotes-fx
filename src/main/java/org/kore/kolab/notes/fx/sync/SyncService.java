@@ -109,15 +109,15 @@ public class SyncService {
                 EntityManager entityManager = PersistenceManager.createEntityManager();
                 entityManager.getTransaction().begin();
                 try {
-                    syncLocalTagChanges(localTags, remoteTags, entityManager);
-                    updateProgress(5, 10);
-                    syncRemoteTagChanges(localTags, remoteTags, entityManager);
-                    updateProgress(6, 10);
-
                     syncLocalNotebooks(localNotebooks, remoteNotebooks, entityManager, imapRepository);
-                    updateProgress(7, 10);
+                    updateProgress(5, 10);
 
                     syncRemoteNotebooks(remoteNotebooks, localNotebooks, entityManager, imapRepository);
+                    updateProgress(6, 10);
+
+                    syncLocalTagChanges(localTags, remoteTags, entityManager);
+                    updateProgress(7, 10);
+                    syncRemoteTagChanges(localTags, remoteTags, entityManager);
                     updateProgress(8, 10);
 
                     imapRepository.merge();
@@ -158,7 +158,7 @@ public class SyncService {
                         newBook.setModificationDate(remoteNotebook.getAuditInformation().getLastModificationDate());
                         newBook.setProductId(remoteNotebook.getIdentification().getProductId());
                         syncRemoteNotes(remoteNotebook, newBook, entityManager);
-                        entityManager.persist(newBook);
+                        entityManager.merge(newBook);
                     }
                 }
             }
@@ -203,7 +203,7 @@ public class SyncService {
                     if (!noteExisted && remoteNote.getAuditInformation().getLastModificationDate().getTime() > account.getLastSync()) {
                         FXNote newNote = new FXNote(account.getId(), remoteNote.getIdentification().getUid());
                         setLocalNote(newNote, remoteNote, localNotebook);
-                        em.persist(newNote);
+                        em.merge(newNote);
                     }
                 }
             }
@@ -302,7 +302,6 @@ public class SyncService {
 
                     //Tag got deleted on server
                     if (!tagExisted && localTag.getModificationDate().getTime() <= account.getLastSync()) {
-                        entityManager.merge(localTag);
                         entityManager.remove(localTag);
                     }
                 }
@@ -331,7 +330,7 @@ public class SyncService {
                         FXTag localTag = new FXTag(account.getId(), remoteTag.getIdentification().getUid());
                         setLocalTag(localTag, remoteTag);
 
-                        entityManager.persist(localTag);
+                        entityManager.merge(localTag);
                     }
                 }
             }

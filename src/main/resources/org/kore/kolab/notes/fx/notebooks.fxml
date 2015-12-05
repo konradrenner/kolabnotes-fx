@@ -7,9 +7,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="notebookRootPane" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.NotebookController">
+<BorderPane fx:id="notebookRootPane" prefHeight="200.0" prefWidth="100.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kore.kolab.notes.fx.controller.NotebookController">
     <bottom>
-        <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <ButtonBar prefHeight="40.0" prefWidth="100.0" BorderPane.alignment="CENTER">
           <buttons>
               <Button fx:id="showAllNotesButton" mnemonicParsing="false" onAction="#showAllNotes" text="%showallnotes" />
               <Button mnemonicParsing="false" onAction="#addNotebook" text="%add" />
@@ -18,7 +18,7 @@
         </ButtonBar>
      </bottom>
      <center>
-        <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
            <content>
               <VBox id="notebookPane" fx:id="notebookBox">
                  <padding>

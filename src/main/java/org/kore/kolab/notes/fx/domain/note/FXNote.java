@@ -69,7 +69,7 @@ public class FXNote extends KolabObject implements Serializable {
     @JoinColumn(name = "nbsummary")
     private FXNotebook notebook;
     
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
       name="note_tags",
       joinColumns={@JoinColumn(name="note_id", referencedColumnName="id")},

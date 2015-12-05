@@ -13,7 +13,7 @@
       <fx:include source="toolbar.fxml"/>
    </top>
    <center>
-       <SplitPane id="rootSplitPane" dividerPositions="0.1" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+       <SplitPane id="rootSplitPane" dividerPositions="0.1,0.2" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
             <SplitPane dividerPositions="0.3" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
               <items>
