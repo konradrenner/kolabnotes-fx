@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -151,7 +152,7 @@ public class SyncService {
                     }
 
                     if (!existed) {
-                        FXNotebook newBook = new FXNotebook(account.getId(), remoteNotebook.getIdentification().getUid());
+                        FXNotebook newBook = new FXNotebook(account.getId(), UUID.randomUUID().toString());
                         newBook.setSummary(remoteNotebook.getSummary());
                         newBook.setCreationDate(remoteNotebook.getAuditInformation().getCreationDate());
                         newBook.setModificationDate(remoteNotebook.getAuditInformation().getLastModificationDate());
@@ -295,11 +296,13 @@ public class SyncService {
                                 remoteTag.getTag().setColor(Colors.getColor(localTag.getColor()));
                             }
                             tagExisted = true;
+                            break;
                         }
                     }
 
                     //Tag got deleted on server
                     if (!tagExisted && localTag.getModificationDate().getTime() <= account.getLastSync()) {
+                        entityManager.merge(localTag);
                         entityManager.remove(localTag);
                     }
                 }

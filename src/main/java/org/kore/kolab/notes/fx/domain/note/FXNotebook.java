@@ -45,7 +45,7 @@ public class FXNotebook extends KolabObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nbsummary;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "notebook")

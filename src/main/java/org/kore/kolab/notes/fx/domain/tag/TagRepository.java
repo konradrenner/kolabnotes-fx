@@ -17,7 +17,6 @@
 package org.kore.kolab.notes.fx.domain.tag;
 
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -36,7 +35,7 @@ public class TagRepository {
     }  
     
     public List<FXTag> getTags(String accountId){
-        return Collections.unmodifiableList(em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getResultList());
+        return em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getResultList();
     }
     
     public Optional<FXTag> getTagByName(String accountId, String summary) {
