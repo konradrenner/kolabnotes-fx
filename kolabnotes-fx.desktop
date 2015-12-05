@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Kolabnotes FX
+Comment=Kolab Notizen lokal verwalten und synchronisieren
+Exec=/opt/jdk/jdk1.8.0_65/jre/bin/java -jar /PATH_TO_APP/kolabnotes-fx.jar
+Icon=/PATH_TO_APP/icon.png
+Terminal=false
+Type=Application
+Categories=Application;Office;
+StartupNotify=false 
