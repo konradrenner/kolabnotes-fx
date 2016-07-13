@@ -37,6 +37,7 @@ import org.kore.kolab.notes.fx.domain.note.FXNote;
 import org.kore.kolab.notes.fx.domain.note.FXNotebook;
 import org.kore.kolab.notes.fx.domain.note.NoteFactory;
 import org.kore.kolab.notes.fx.domain.note.NoteRepository;
+import org.kore.kolab.notes.fx.domain.tag.FXTag;
 import org.kore.kolab.notes.fx.domain.tag.TagRepository;
 
 /**
@@ -90,7 +91,8 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
             notes = notebook.getNotes();
         } else if (event.getType() == RefreshViewBus.RefreshTypes.SELECTED_TAG) {
             notebookId = null;
-            notes = new TagRepository().getTag(event.getObjectId()).getNotes();
+            FXTag tag = new TagRepository().getTag(event.getObjectId());
+            notes = tag.getNotes();
         } else if (event.getType() == RefreshViewBus.RefreshTypes.NEW_NOTE
                 || event.getType() == RefreshViewBus.RefreshTypes.DELETED_NOTE
                 || event.getType() == RefreshViewBus.RefreshTypes.EDITED_NOTE) {
