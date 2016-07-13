@@ -53,6 +53,7 @@ public class FXAttachment implements Serializable {
     public FXAttachment(String accountId, String attachmentid, FXNote note) {
         this.accountId = accountId;
         this.attachmentid = attachmentid;
+        this.fileName = attachmentid;
         this.note = note;
     }
 
@@ -78,6 +79,11 @@ public class FXAttachment implements Serializable {
     public String getAttachmentid() {
         return attachmentid;
     }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
 
     public String getMimeType() {
         return mimeType;

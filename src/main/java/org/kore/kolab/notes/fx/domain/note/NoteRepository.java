@@ -67,6 +67,13 @@ public class NoteRepository {
         em.getTransaction().commit();
         em.close();
     }
+
+    public void createAttachment(FXAttachment attachment) {
+        em.getTransaction().begin();
+        em.persist(attachment);
+        em.getTransaction().commit();
+        em.close();
+    }
     
     public void updateNotebook(FXNotebook notebook){
         em.getTransaction().begin();
@@ -85,6 +92,13 @@ public class NoteRepository {
         em.getTransaction().commit();
         em.close();
     }
+
+    public void updateAttachment(FXAttachment attachment) {
+        em.getTransaction().begin();
+        em.merge(attachment);
+        em.getTransaction().commit();
+        em.close();
+    }
     
     public void deleteNotebook(FXNotebook notebook){
         em.getTransaction().begin();
@@ -96,6 +110,13 @@ public class NoteRepository {
     public void deleteNote(FXNote note){
         em.getTransaction().begin();
         em.remove(note);
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    public void deleteAttachment(FXAttachment attachment) {
+        em.getTransaction().begin();
+        em.remove(attachment);
         em.getTransaction().commit();
         em.close();
     }

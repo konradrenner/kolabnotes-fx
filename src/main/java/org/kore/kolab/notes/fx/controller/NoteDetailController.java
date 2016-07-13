@@ -259,7 +259,7 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
             return;
         }
 
-        new AttachmentDialog(this.noteUID, this.bundle).showAndWait();
+        new AttachmentDialog(this.accountId, this.noteUID, this.bundle, noteEditor.getScene().getWindow()).showAndWait();
     }
 
     private VBox createCheckBoxesForEditTags(TagRepository tagRepo, List<FXTag> selectedTags) {
