@@ -253,6 +253,15 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
         RefreshViewBus.informListener(refreshEvent);
     }
 
+    @FXML
+    void openAttachments(ActionEvent event) {
+        if (noteUID == null) {
+            return;
+        }
+
+        new AttachmentDialog(this.noteUID, this.bundle).showAndWait();
+    }
+
     private VBox createCheckBoxesForEditTags(TagRepository tagRepo, List<FXTag> selectedTags) {
         List<FXTag> tags = tagRepo.getTags(accountId);
         Node[] nodes = new Node[tags.size() + 1];

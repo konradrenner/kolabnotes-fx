@@ -19,7 +19,9 @@ package org.kore.kolab.notes.fx.domain.note;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +34,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.kore.kolab.notes.Note;
 import org.kore.kolab.notes.fx.domain.tag.FXTag;
@@ -74,15 +77,22 @@ public class FXNote extends KolabObject implements Serializable {
       name="note_tags",
       joinColumns={@JoinColumn(name="note_id", referencedColumnName="id")},
       inverseJoinColumns={@JoinColumn(name="tag_id", referencedColumnName="id")})
-    private List<FXTag> tags;
+    private Set<FXTag> tags;
+
+    @OneToMany(mappedBy = "note")
+    private Set<FXAttachment> attachments;
     
     public FXNote(String accountId, String id) {
         super(accountId, id);
-        tags = new ArrayList<>();
+        tags = new LinkedHashSet<>();
     }
 
     protected FXNote() {
         //Tool
+    }
+
+    public Set<FXAttachment> getAttachments() {
+        return attachments;
     }
 
     public String getSummary() {

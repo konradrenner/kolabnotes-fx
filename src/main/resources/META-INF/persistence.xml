@@ -6,6 +6,7 @@
     <class>org.kore.kolab.notes.fx.domain.note.FXNote</class>
     <class>org.kore.kolab.notes.fx.domain.tag.FXTag</class>
     <class>org.kore.kolab.notes.fx.domain.account.Account</class>
+    <class>org.kore.kolab.notes.fx.domain.note.FXAttachment</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby:kolabnotesfx;create=true"/>
       <property name="javax.persistence.jdbc.user" value="kolabnotes"/>
