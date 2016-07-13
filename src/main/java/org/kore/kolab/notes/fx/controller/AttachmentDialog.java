@@ -16,13 +16,21 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
+import java.awt.Desktop;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.sql.Timestamp;
 import java.util.ResourceBundle;
 import java.util.Set;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -65,7 +73,7 @@ public class AttachmentDialog extends Dialog<Void> {
         this.bundle = bundle;
         this.repo = new NoteRepository();
         this.stage = stage;
-        this.attachmentList = new VBox();
+        this.attachmentList = new VBox(1.0);
         init();
     }
 
@@ -80,6 +88,13 @@ public class AttachmentDialog extends Dialog<Void> {
         BorderPane content = new BorderPane();
         ScrollPane scroll = new ScrollPane();
         scroll.setContent(attachmentList);
+        ObservableList<Node> children = attachmentList.getChildren();
+
+        int idx = 0;
+        for (FXAttachment att : attachments) {
+            children.add(createAttachmentNode(idx++, att));
+        }
+
         content.setCenter(scroll);
         content.setTop(createButtons());
 
@@ -113,8 +128,9 @@ public class AttachmentDialog extends Dialog<Void> {
                         attachment.setAttachmentData(output.toByteArray());
                         attachment.setMimeType(Files.probeContentType(file.toPath()));
                         note.addAttachment(attachment);
+                        note.setModificationDate(new Timestamp(System.currentTimeMillis()));
 
-                        attachmentList.getChildren().add(createAttachmentNode(attachment));
+                        attachmentList.getChildren().add(createAttachmentNode(attachmentList.getChildren().size(), attachment));
                         repo.createAttachment(attachment);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -129,12 +145,12 @@ public class AttachmentDialog extends Dialog<Void> {
         return flow;
     }
 
-    private Node createAttachmentNode(FXAttachment attachment) {
+    private Node createAttachmentNode(int index, FXAttachment attachment) {
         BorderPane content = new BorderPane();
         FlowPane contentFlow = new FlowPane(Orientation.VERTICAL);
         contentFlow.setPadding(new Insets(1.0));
         Text fileName = new Text(attachment.getFileName());
-        fileName.setFont(Font.font(null, FontWeight.BOLD, 10));
+        fileName.setFont(Font.font(null, FontWeight.BOLD, 20));
         
         Text mimeType = new Text(attachment.getMimeType());
 
@@ -142,15 +158,70 @@ public class AttachmentDialog extends Dialog<Void> {
 
         content.setCenter(contentFlow);
         
-        FlowPane flow = new FlowPane(Orientation.HORIZONTAL);
+        FlowPane flow = new FlowPane(Orientation.VERTICAL);
         Button show = new Button(bundle.getString("open"));
+
+        show.setOnAction(new OpenActionHandler(attachment));
+
         Button delete = new Button(bundle.getString("delete"));
+
+        delete.setOnAction(new DeleteActionHandler(attachment, index));
         
         flow.getChildren().addAll(show, delete);
-        flow.setPadding(new Insets(1.0));
+        flow.setPadding(new Insets(2.0));
         
-        content.setBottom(flow);
-        
+        content.setLeft(flow);
+
         return content;
+    }
+
+    static class OpenActionHandler implements EventHandler<ActionEvent> {
+
+        private final FXAttachment attachment;
+
+        public OpenActionHandler(FXAttachment attachment) {
+            this.attachment = attachment;
+        }
+
+        @Override
+        public void handle(ActionEvent event) {
+            try {
+                Path createTempFile = Files.createTempFile(null, attachment.getFileName());
+                
+                try (OutputStream stream = Files.newOutputStream(createTempFile, StandardOpenOption.WRITE);
+                        ByteArrayInputStream input = new ByteArrayInputStream(attachment.getAttachmentData())) {
+                    int count;
+                    byte[] bytes = new byte[1024];
+                    while ((count = input.read(bytes)) != -1) {
+                        stream.write(bytes, 0, count);
+                    }
+                }
+                
+                Desktop.getDesktop().open(createTempFile.toFile());
+            } catch (IOException ex) {
+                System.out.println(ex);
+            }
+        }
+
+    }
+
+    class DeleteActionHandler implements EventHandler<ActionEvent> {
+
+        private final FXAttachment attachment;
+        private final int index;
+
+        public DeleteActionHandler(FXAttachment attachment, int index) {
+            this.attachment = attachment;
+            this.index = index;
+        }
+
+        @Override
+        public void handle(ActionEvent event) {
+            attachmentList.getChildren().remove(index);
+            note.setModificationDate(new Timestamp(System.currentTimeMillis()));
+            note.removeAttachment(attachment);
+            repo.deleteAttachment(attachment);
+        }
+
     }
 }

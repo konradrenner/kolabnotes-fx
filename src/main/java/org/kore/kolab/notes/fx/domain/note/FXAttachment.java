@@ -96,6 +96,9 @@ public class FXAttachment implements Serializable {
     @Override
     public int hashCode() {
         int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.accountId);
+        hash = 29 * hash + Objects.hashCode(this.attachmentid);
+        hash = 29 * hash + Objects.hashCode(this.note);
         return hash;
     }
 
@@ -111,11 +114,18 @@ public class FXAttachment implements Serializable {
             return false;
         }
         final FXAttachment other = (FXAttachment) obj;
+        if (!Objects.equals(this.accountId, other.accountId)) {
+            return false;
+        }
         if (!Objects.equals(this.attachmentid, other.attachmentid)) {
+            return false;
+        }
+        if (!Objects.equals(this.note, other.note)) {
             return false;
         }
         return true;
     }
+
 
     @Override
     public String toString() {

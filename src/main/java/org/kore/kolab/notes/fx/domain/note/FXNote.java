@@ -146,6 +146,10 @@ public class FXNote extends KolabObject implements Serializable {
     public void addAttachment(FXAttachment attachment) {
         this.attachments.add(attachment);
     }
+
+    public void removeAttachment(FXAttachment attachment) {
+        this.attachments.remove(attachment);
+    }
     
     public void attachTags(List<FXTag> tags) {
         this.tags.addAll(tags);
