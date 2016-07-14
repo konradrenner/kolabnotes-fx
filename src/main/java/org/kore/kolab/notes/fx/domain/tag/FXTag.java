@@ -35,7 +35,7 @@ import org.kore.kolab.notes.fx.persistence.KolabObject;
 @NamedQueries({
     @NamedQuery(name = "FXTag.findAll", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId ORDER BY tag.tagsummary"),
     @NamedQuery(name = "FXTag.findBySummary", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId AND tag.tagsummary = :summary"),
-    @NamedQuery(name = "FXTag.findAllModified", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId AND tag.modificationDate < :modificationDate ORDER BY tag.tagsummary")
+    @NamedQuery(name = "FXTag.findAllModified", query = "SELECT tag FROM FXTag tag WHERE tag.accountId = :accountId AND tag.modificationDate >= :modificationDate ORDER BY tag.tagsummary")
 })
 @Table(name="tag")
 @Entity
@@ -48,6 +48,9 @@ public class FXTag extends KolabObject implements Serializable {
     
     @Column
     private String color;
+
+    @Column
+    private int priority;
     
     @ManyToMany(mappedBy="tags")
     private List<FXNote> notes;
@@ -59,6 +62,14 @@ public class FXTag extends KolabObject implements Serializable {
 
     protected FXTag() {
         //Tool
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public List<FXNote> getNotes() {
@@ -108,6 +119,7 @@ public class FXTag extends KolabObject implements Serializable {
 
     @Override
     public String toString() {
-        return "FXTag{" + super.toString() + "tagsummary=" + tagsummary + ", color=" + color + ", notes=" + notes + '}';
+        return "FXTag{" + "tagsummary=" + tagsummary + ", color=" + color + ", priority=" + priority + ", notes=" + notes + '}';
     }
+
 }

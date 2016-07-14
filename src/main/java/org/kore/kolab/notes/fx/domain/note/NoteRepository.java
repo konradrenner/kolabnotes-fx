@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
+import org.kore.kolab.notes.fx.persistence.DeletedObject;
 import org.kore.kolab.notes.fx.persistence.PersistenceManager;
 
 /**
@@ -31,14 +32,29 @@ public class NoteRepository {
 
     public NoteRepository() {
         em = PersistenceManager.createEntityManager();
-    }  
+    }
+
+    public List<FXNotebook> getNotebooksModifiedAfter(String accountId, Timestamp lastSync) {
+        return Collections.unmodifiableList(em.createNamedQuery("FXNotebook.findAllModified", FXNotebook.class).setParameter("accountId", accountId).setParameter("modificationDate", lastSync).getResultList());
+    }
+
+    public List<FXNote> getNotesModifiedAfter(String accountId, Timestamp lastSync) {
+        return Collections.unmodifiableList(em.createNamedQuery("FXNote.findAllModified", FXNote.class).setParameter("accountId", accountId).setParameter("modificationDate", lastSync).getResultList());
+    }
     
     public List<FXNotebook> getNotebooks(String accountId){
-        return Collections.unmodifiableList(em.createNamedQuery("FXNotebook.findWithDeletedFlag", FXNotebook.class).setParameter("accountId", accountId).setParameter("deleted", false).getResultList());
+        return Collections.unmodifiableList(em.createNamedQuery("FXNotebook.findAll", FXNotebook.class).setParameter("accountId", accountId).getResultList());
     }
 
     public FXNotebook getNotebookBySummary(String accountId, String summary) {
         return em.createNamedQuery("FXNotebook.findBySummary", FXNotebook.class).setParameter("accountId", accountId).setParameter("summary", summary).getSingleResult();
+    }
+
+    public boolean anyLocalChanges(String accountId, Timestamp lastSync) {
+        List<FXNotebook> notebooks = em.createNamedQuery("FXNotebook.findAllModified", FXNotebook.class).setParameter("accountId", accountId).setParameter("modificationDate", lastSync).getResultList();
+        List<FXNote> notes = em.createNamedQuery("FXNote.findAllModified", FXNote.class).setParameter("accountId", accountId).setParameter("modificationDate", lastSync).getResultList();
+
+        return !notes.isEmpty() || !notebooks.isEmpty();
     }
 
     public FXNotebook getNotebook(String uid) {
@@ -78,7 +94,6 @@ public class NoteRepository {
     public void updateNotebook(FXNotebook notebook){
         em.getTransaction().begin();
         notebook.setModificationDate(new Timestamp(System.currentTimeMillis()));
-        notebook.setProductId("kolabnotes-fx");
         em.merge(notebook);
         em.getTransaction().commit();
         em.close();
@@ -87,7 +102,6 @@ public class NoteRepository {
     public void updateNote(FXNote note){
         em.getTransaction().begin();
         note.setModificationDate(new Timestamp(System.currentTimeMillis()));
-        note.setProductId("kolabnotes-fx");
         em.merge(note);
         em.getTransaction().commit();
         em.close();
@@ -103,6 +117,12 @@ public class NoteRepository {
     public void deleteNotebook(FXNotebook notebook){
         em.getTransaction().begin();
         em.remove(notebook);
+        DeletedObject obj = new DeletedObject();
+        obj.setAccountId(notebook.getAccountId());
+        obj.setObjectId(notebook.getId());
+        obj.setObjectSummary(notebook.getSummary());
+        obj.setType(DeletedObject.Type.NOTEBOOK);
+        em.persist(obj);
         em.getTransaction().commit();
         em.close();
     }
@@ -110,6 +130,12 @@ public class NoteRepository {
     public void deleteNote(FXNote note){
         em.getTransaction().begin();
         em.remove(note);
+        DeletedObject obj = new DeletedObject();
+        obj.setAccountId(note.getAccountId());
+        obj.setObjectId(note.getId());
+        obj.setObjectSummary(note.getSummary());
+        obj.setType(DeletedObject.Type.NOTE);
+        em.persist(obj);
         em.getTransaction().commit();
         em.close();
     }

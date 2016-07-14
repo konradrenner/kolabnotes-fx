@@ -16,17 +16,15 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
-import java.awt.Desktop;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -175,7 +173,7 @@ public class AttachmentDialog extends Dialog<Void> {
         return content;
     }
 
-    static class OpenActionHandler implements EventHandler<ActionEvent> {
+    class OpenActionHandler implements EventHandler<ActionEvent> {
 
         private final FXAttachment attachment;
 
@@ -186,18 +184,21 @@ public class AttachmentDialog extends Dialog<Void> {
         @Override
         public void handle(ActionEvent event) {
             try {
-                Path createTempFile = Files.createTempFile(null, attachment.getFileName());
-                
-                try (OutputStream stream = Files.newOutputStream(createTempFile, StandardOpenOption.WRITE);
-                        ByteArrayInputStream input = new ByteArrayInputStream(attachment.getAttachmentData())) {
-                    int count;
-                    byte[] bytes = new byte[1024];
-                    while ((count = input.read(bytes)) != -1) {
-                        stream.write(bytes, 0, count);
+                FileChooser chooser = new FileChooser();
+                chooser.setInitialFileName(attachment.getFileName());
+
+                File file = chooser.showSaveDialog(stage);
+
+                if (file != null) {
+                    try (OutputStream stream = new FileOutputStream(file);
+                            ByteArrayInputStream input = new ByteArrayInputStream(attachment.getAttachmentData())) {
+                        int count;
+                        byte[] bytes = new byte[1024];
+                        while ((count = input.read(bytes)) != -1) {
+                            stream.write(bytes, 0, count);
+                        }
                     }
                 }
-                
-                Desktop.getDesktop().open(createTempFile.toFile());
             } catch (IOException ex) {
                 System.out.println(ex);
             }

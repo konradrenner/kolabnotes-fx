@@ -38,10 +38,7 @@ public class KolabObject {
     
     @Column(nullable = false)
     protected Timestamp modificationDate;
-    
-    @Column(nullable = false)
-    private boolean deleted;
-    
+
     @Column(nullable = false)
     private String accountId;
     
@@ -90,17 +87,9 @@ public class KolabObject {
         return id.trim();
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-    
-    void deleteLogical(){
-        this.deleted = true;
-    }
-
     @Override
     public String toString() {
-        return "KolabObject{ accountId=" + accountId + ", id=" + id + ", productId=" + productId + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", deleted=" + deleted + '}';
+        return "KolabObject{ accountId=" + accountId + ", id=" + id + ", productId=" + productId + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + '}';
     }
 
     

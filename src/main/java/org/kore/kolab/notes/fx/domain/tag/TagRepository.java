@@ -37,6 +37,10 @@ public class TagRepository {
     public List<FXTag> getTags(String accountId){
         return em.createNamedQuery("FXTag.findAll", FXTag.class).setParameter("accountId", accountId).getResultList();
     }
+
+    public List<FXTag> getTagsModifiedAfter(String accountId, Timestamp lastSync) {
+        return em.createNamedQuery("FXTag.findAllModified", FXTag.class).setParameter("accountId", accountId).setParameter("modificationDate", lastSync).getResultList();
+    }
     
     public Optional<FXTag> getTagByName(String accountId, String summary) {
         try{
@@ -44,6 +48,12 @@ public class TagRepository {
         }catch(NoResultException e){
             return Optional.empty();
         }
+    }
+
+    public boolean anyLocalChanges(String accountId, Timestamp lastSync) {
+        List<FXTag> tags = em.createNamedQuery("FXTag.findAllModified", FXTag.class).setParameter("accountId", accountId).setParameter("modificationDate", lastSync).getResultList();
+
+        return !tags.isEmpty();
     }
 
     public FXTag getTag(String uid) {
@@ -66,7 +76,6 @@ public class TagRepository {
     public void updateTag(FXTag tag){
         em.getTransaction().begin();
         tag.setModificationDate(new Timestamp(System.currentTimeMillis()));
-        tag.setProductId("kolabnotes-fx");
         em.merge(tag);
         em.getTransaction().commit();
         em.close();
