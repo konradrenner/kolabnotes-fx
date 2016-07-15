@@ -52,6 +52,7 @@ public class NoteFactory {
         note.setProductId("kolabnotes-fx");
         note.setClassification(Note.Classification.PUBLIC);
         note.setNotebook(book);
+        book.setModificationDate(note.getModificationDate());
         
         return note;
     }

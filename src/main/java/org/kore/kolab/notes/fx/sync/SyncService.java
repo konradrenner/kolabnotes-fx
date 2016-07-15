@@ -128,7 +128,7 @@ public class SyncService {
                     updateProgress(6, 10);
 
                     if (notesDirty) {
-                        syncLocalNotebooks(localNotebooks, remoteNotebooks, imapRepository, lastSync);
+                        syncLocalNotebooks(localNotebooks, remoteNotebooks, imapRepository, imapRepository.getRemoteTags(), lastSync);
                     }
                     updateProgress(7, 10);
                     
@@ -138,7 +138,9 @@ public class SyncService {
                     updateProgress(8, 10);
                     syncRemoteNotebooks(remoteNotebooks, entityManager, imapRepository, deletedRepo.getDeletedObjects(account.getId()));
                     updateProgress(9, 10);
-
+                    
+                    imapRepository.merge();
+                    
                     account.setLastSync(System.currentTimeMillis());
                     entityManager.merge(account);
                     deletedRepo.clearDeletedObjects(account.getId());
@@ -162,12 +164,12 @@ public class SyncService {
 
             }
 
-            void syncLocalNotebooks(Collection<FXNotebook> notebooks, Collection<Notebook> remoteNotebooks, ImapNotesRepository repo, Timestamp lastSync) {
+            void syncLocalNotebooks(Collection<FXNotebook> notebooks, Collection<Notebook> remoteNotebooks, ImapNotesRepository repo, RemoteTags tags, Timestamp lastSync) {
                 for (FXNotebook book : notebooks) {
                     boolean notFound = true;
                     for (Notebook remote : remoteNotebooks) {
                         if (remote.getSummary().equals(book.getSummary())) {
-                            syncLocalNotes(book, remote, lastSync);
+                            syncLocalNotes(book, remote, tags, lastSync);
                             notFound = false;
                             break;
                         }
@@ -175,12 +177,12 @@ public class SyncService {
 
                     if (notFound && lastSync.before(book.getCreationDate())) {
                         Notebook remote = repo.createNotebook(book.getId(), book.getSummary());
-                        syncLocalNotes(book, remote, lastSync);
+                        syncLocalNotes(book, remote, tags, lastSync);
                     }
                 }
             }
 
-            void syncLocalNotes(FXNotebook localBook, Notebook remoteBook, Timestamp lastSync) {
+            void syncLocalNotes(FXNotebook localBook, Notebook remoteBook, RemoteTags tags, Timestamp lastSync) {
                 for (FXNote note : localBook.getNotes()) {
                     if (lastSync.after(note.getModificationDate())) {
                         continue;
@@ -190,14 +192,14 @@ public class SyncService {
 
                     if (remoteNote == null) {
                         Note createNote = remoteBook.createNote(UUID.randomUUID().toString(), note.getSummary());
-                        mapIntoRemoteNote(createNote, note);
+                        mapIntoRemoteNote(createNote, note, tags);
                     } else if (note.getModificationDate().after(remoteNote.getAuditInformation().getLastModificationDate())) {
-                        mapIntoRemoteNote(remoteNote, note);
+                        mapIntoRemoteNote(remoteNote, note, tags);
                     }
                 }
             }
 
-            private void mapIntoRemoteNote(Note remoteNote, FXNote note) {
+            private void mapIntoRemoteNote(Note remoteNote, FXNote note, RemoteTags remoteTags) {
                 remoteNote.setClassification(note.getClassification());
                 remoteNote.setColor(Colors.getColor(note.getColor()));
                 remoteNote.setDescription(note.getDescription());
@@ -216,14 +218,18 @@ public class SyncService {
                     tags[i] = tag;
                 }
                 remoteNote.addCategories(tags);
-
+                
+                remoteTags.removeTags(remoteNote.getIdentification().getUid());
+                remoteTags.attachTags(remoteNote.getIdentification().getUid(), tags);
             }
 
             void syncLocalTags(Collection<FXTag> localTags, Collection<RemoteTags.TagDetails> remoteTags) {
                 for (FXTag localTag : localTags) {
+                    boolean notFound = true;
                     for (RemoteTags.TagDetails remoteTag : remoteTags) {
                         if (localTag.getId().equals(remoteTag.getIdentification().getUid())) {
                             setRemoteTag(localTag, remoteTag);
+                            notFound = false;
                             break;
                         }
                     }

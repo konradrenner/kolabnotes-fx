@@ -79,6 +79,9 @@ public class NoteRepository {
     
     public void createNote(FXNote note){
         em.getTransaction().begin();
+        FXNotebook book = note.getNotebook();
+        book.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        em.merge(book);
         em.persist(note);
         em.getTransaction().commit();
         em.close();
@@ -86,6 +89,9 @@ public class NoteRepository {
 
     public void createAttachment(FXAttachment attachment) {
         em.getTransaction().begin();
+        FXNotebook book = attachment.getNote().getNotebook();
+        book.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        em.merge(book);
         em.persist(attachment);
         em.getTransaction().commit();
         em.close();
@@ -102,19 +108,15 @@ public class NoteRepository {
     public void updateNote(FXNote note){
         em.getTransaction().begin();
         note.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        FXNotebook book = note.getNotebook();
+        book.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        em.merge(book);
         em.merge(note);
         em.getTransaction().commit();
         em.close();
     }
 
-    public void updateAttachment(FXAttachment attachment) {
-        em.getTransaction().begin();
-        em.merge(attachment);
-        em.getTransaction().commit();
-        em.close();
-    }
-    
-    public void deleteNotebook(FXNotebook notebook){
+    public void deleteNotebook(FXNotebook notebook) {
         em.getTransaction().begin();
         em.remove(notebook);
         DeletedObject obj = new DeletedObject();
@@ -129,6 +131,10 @@ public class NoteRepository {
     
     public void deleteNote(FXNote note){
         em.getTransaction().begin();
+        FXNotebook book = note.getNotebook();
+        book.removeNote(note.getId());
+        book.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        em.merge(book);
         em.remove(note);
         DeletedObject obj = new DeletedObject();
         obj.setAccountId(note.getAccountId());
@@ -142,6 +148,9 @@ public class NoteRepository {
 
     public void deleteAttachment(FXAttachment attachment) {
         em.getTransaction().begin();
+        FXNotebook book = attachment.getNote().getNotebook();
+        book.setModificationDate(new Timestamp(System.currentTimeMillis()));
+        em.merge(book);
         em.remove(attachment);
         em.getTransaction().commit();
         em.close();

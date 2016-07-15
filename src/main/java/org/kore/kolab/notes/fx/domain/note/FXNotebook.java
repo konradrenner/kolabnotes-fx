@@ -62,6 +62,15 @@ public class FXNotebook extends KolabObject implements Serializable {
     public List<FXNote> getNotes() {
         return new ArrayList<>(notes);
     }
+
+    public void removeNote(String id) {
+        for (FXNote note : notes) {
+            if (note.getId().equals(id)) {
+                notes.remove(note);
+                break;
+            }
+        }
+    }
     
     public String getSummary() {
         return nbsummary.trim();
