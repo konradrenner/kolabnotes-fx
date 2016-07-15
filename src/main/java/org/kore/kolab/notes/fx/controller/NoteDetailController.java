@@ -27,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -163,6 +164,10 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     @FXML
     void saveNote(ActionEvent event){
         if (noteUID == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(bundle.getString("error"));
+            alert.setHeaderText(bundle.getString("chooseNote"));
+            alert.showAndWait();
             return;
         }
         NoteRepository repo = new NoteRepository();
@@ -192,6 +197,10 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     @FXML
     void editTags(ActionEvent event) {
         if (noteUID == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(bundle.getString("error"));
+            alert.setHeaderText(bundle.getString("chooseNote"));
+            alert.showAndWait();
             return;
         }
 
@@ -242,6 +251,10 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     @FXML
     void deleteNote(ActionEvent event) {
         if (noteUID == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(bundle.getString("error"));
+            alert.setHeaderText(bundle.getString("chooseNote"));
+            alert.showAndWait();
             return;
         }
 
@@ -256,6 +269,10 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     @FXML
     void openAttachments(ActionEvent event) {
         if (noteUID == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(bundle.getString("error"));
+            alert.setHeaderText(bundle.getString("chooseNote"));
+            alert.showAndWait();
             return;
         }
 

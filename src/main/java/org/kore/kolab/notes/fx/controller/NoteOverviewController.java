@@ -27,6 +27,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
@@ -134,7 +136,10 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
     @FXML
     void addNote(ActionEvent event) {
         if (notebookId == null) {
-            //TODO select notebook
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle(bundle.getString("error"));
+            alert.setHeaderText(bundle.getString("chooseNotebook"));
+            alert.showAndWait();
             return;
         }
 
