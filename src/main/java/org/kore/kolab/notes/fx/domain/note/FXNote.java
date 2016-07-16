@@ -72,7 +72,7 @@ public class FXNote extends KolabObject implements Serializable {
     @JoinColumn(name = "nbsummary")
     private FXNotebook notebook;
     
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
       name="note_tags",
       joinColumns={@JoinColumn(name="note_id", referencedColumnName="id")},
@@ -186,6 +186,16 @@ public class FXNote extends KolabObject implements Serializable {
 
     @Override
     public String toString() {
-        return "FXNote{" + super.toString() + "summary=" + summary + ", description=" + description + ", classification=" + classification + ", color=" + color + ", notebook=" + notebook + ", tags=" + tags + '}';
+        StringBuilder tagString = new StringBuilder();
+        for (FXTag tag : this.tags) {
+            tagString.append(tag.getSummary() + ",");
+        }
+        String toTagString;
+        if (tagString.length() > 0) {
+            toTagString = tagString.substring(0, tagString.length() - 1);
+        } else {
+            toTagString = "";
+        }
+        return "FXNote{" + super.toString() + "summary=" + summary + ", description=" + description + ", classification=" + classification + ", color=" + color + ", notebook=" + notebook + ", tags=" + tagString + '}';
     }
 }

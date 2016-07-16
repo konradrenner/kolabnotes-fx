@@ -154,7 +154,7 @@ public class SyncService {
                     updateProgress(9, 10);
 
                     entityManager.getTransaction().commit();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
                     entityManager.getTransaction().rollback();
                     
@@ -274,7 +274,6 @@ public class SyncService {
                     newBook.setModificationDate(remoteNotebook.getAuditInformation().getLastModificationDate());
                     newBook.setProductId(remoteNotebook.getIdentification().getProductId());
                     syncRemoteNotes(remoteNotebook, newBook, entityManager, deletions);
-                    entityManager.merge(newBook);
                 }
             }
 
@@ -289,7 +288,6 @@ public class SyncService {
 
                     FXNote newNote = noteFactory.newNote(remoteNote.getSummary(), localBook);
                     setLocalNote(newNote, remoteNote, localBook, em);
-                    em.merge(newNote);
                     allImportedNotes.add(newNote);
                 }
             }
@@ -336,7 +334,6 @@ public class SyncService {
                 for (RemoteTags.TagDetails remoteTag : remoteTags) {
                     FXTag localTag = tagFactory.newTag(remoteTag.getTag().getName());
                     setLocalTag(localTag, remoteTag);
-                    entityManager.merge(localTag);
                     allImportedTags.add(localTag);
                 }
             }
