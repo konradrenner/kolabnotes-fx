@@ -19,7 +19,7 @@ package org.kore.kolab.notes.fx.sync;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,8 +81,7 @@ public class SyncService {
         ProgressForm pForm = new ProgressForm();
         final NoteFactory noteFactory = new NoteFactory(account.getId());
         final TagFactory tagFactory = new TagFactory(account.getId());
-        final Set<FXNote> allImportedNotes = new LinkedHashSet<>();
-        final Set<FXTag> allImportedTags = new LinkedHashSet<>();
+        final Map<String, FXTag> alreadyPersistetTags = new HashMap<>();
 
         // In real life this task would do something useful and return 
         // some meaningful result:
@@ -142,8 +141,9 @@ public class SyncService {
                     
                     DeletedObjectRepository deletedRepo = new DeletedObjectRepository(entityManager);
 
-                    syncRemoteTagChanges(localTags, remoteTags, entityManager);
                     syncRemoteNotebooks(remoteNotebooks, entityManager, imapRepository, deletedRepo.getDeletedObjects(account.getId()));
+                    syncRemoteTagChanges(localTags, remoteTags, entityManager);
+
                     updateProgress(8, 10);
 
                     account.setLastSync(System.currentTimeMillis());
@@ -273,6 +273,7 @@ public class SyncService {
                     newBook.setCreationDate(remoteNotebook.getAuditInformation().getCreationDate());
                     newBook.setModificationDate(remoteNotebook.getAuditInformation().getLastModificationDate());
                     newBook.setProductId(remoteNotebook.getIdentification().getProductId());
+                    entityManager.persist(newBook);
                     syncRemoteNotes(remoteNotebook, newBook, entityManager, deletions);
                 }
             }
@@ -281,14 +282,15 @@ public class SyncService {
                 for (Note remoteNote : remoteNotebook.getNotes()) {
                     
                     DeletedObject delObj = deletions.get(remoteNote.getIdentification().getUid());
-                    if (delObj != null && delObj.getDeletionTimestamp().after(remoteNote.getAuditInformation().getLastModificationDate())) {
+                    Timestamp lastModificationDate = remoteNote.getAuditInformation().getLastModificationDate();
+                    if (delObj != null && delObj.getDeletionTimestamp().after(lastModificationDate)) {
                         remoteNotebook.deleteNote(remoteNote.getIdentification().getUid());
                         continue;
                     }
 
                     FXNote newNote = noteFactory.newNote(remoteNote.getSummary(), localBook);
+                    em.persist(newNote);
                     setLocalNote(newNote, remoteNote, localBook, em);
-                    allImportedNotes.add(newNote);
                 }
             }
 
@@ -311,9 +313,11 @@ public class SyncService {
                 ArrayList<FXTag> newTags = new ArrayList<>();
                 for (Tag remoteTag : remoteNote.getCategories()) {
                     //Tags should be already exist, create just if not
-                    FXTag localTag = em.find(FXTag.class, remoteTag.getIdentification().getUid());
+                    FXTag localTag = alreadyPersistetTags.get(remoteTag.getIdentification().getUid());
                     if (localTag == null) {
                         localTag = tagFactory.newTag(remoteTag.getName());
+                        em.persist(localTag);
+                        alreadyPersistetTags.put(remoteTag.getIdentification().getUid(), localTag);
                     }
                     setLocalTag(localTag, remoteTag, localNote);
                     newTags.add(localTag);
@@ -325,16 +329,20 @@ public class SyncService {
                     FXAttachment localAtt = new FXAttachment(localNote.getAccountId(), att.getId(), localNote);
                     localAtt.setAttachmentData(att.getData());
                     localAtt.setMimeType(att.getMimeType());
-
+                    em.persist(localAtt);
                     localNote.addAttachment(localAtt);
                 }
             }
 
             void syncRemoteTagChanges(List<FXTag> localTags, Set<RemoteTags.TagDetails> remoteTags, EntityManager entityManager) {
                 for (RemoteTags.TagDetails remoteTag : remoteTags) {
-                    FXTag localTag = tagFactory.newTag(remoteTag.getTag().getName());
-                    setLocalTag(localTag, remoteTag);
-                    allImportedTags.add(localTag);
+                    FXTag localTag = alreadyPersistetTags.get(remoteTag.getIdentification().getUid());
+
+                    if (localTag == null) {
+                        localTag = tagFactory.newTag(remoteTag.getTag().getName());
+                        setLocalTag(localTag, remoteTag);
+                        entityManager.persist(localTag);
+                    }
                 }
             }
 

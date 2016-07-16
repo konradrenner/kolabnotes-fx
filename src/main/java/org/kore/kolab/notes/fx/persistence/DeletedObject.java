@@ -29,7 +29,8 @@ import javax.persistence.NamedQuery;
  * @author Konrad Renner
  */
 @NamedQueries({
-    @NamedQuery(name = "DeletedObject.findAll", query = "SELECT obj FROM DeletedObject obj WHERE obj.accountId = :accountId ORDER BY obj.deletionTimestamp")
+    @NamedQuery(name = "DeletedObject.findAll", query = "SELECT obj FROM DeletedObject obj WHERE obj.accountId = :accountId ORDER BY obj.deletionTimestamp"),
+    @NamedQuery(name = "DeletedObject.findByObjectId", query = "SELECT obj FROM DeletedObject obj WHERE obj.accountId = :accountId and obj.objectId = :objectId ORDER BY obj.deletionTimestamp")
 })
 @Entity
 public class DeletedObject implements Serializable {
