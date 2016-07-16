@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -71,7 +72,7 @@ public class FXNote extends KolabObject implements Serializable {
     @JoinColumn(name = "nbsummary")
     private FXNotebook notebook;
     
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(
       name="note_tags",
       joinColumns={@JoinColumn(name="note_id", referencedColumnName="id")},
@@ -84,6 +85,7 @@ public class FXNote extends KolabObject implements Serializable {
     public FXNote(String accountId, String id) {
         super(accountId, id);
         tags = new LinkedHashSet<>();
+        attachments = new LinkedHashSet<>();
     }
 
     protected FXNote() {

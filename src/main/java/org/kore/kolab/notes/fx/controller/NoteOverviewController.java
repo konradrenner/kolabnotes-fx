@@ -94,7 +94,7 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         } else if (event.getType() == RefreshViewBus.RefreshTypes.SELECTED_TAG) {
             notebookId = null;
             FXTag tag = new TagRepository().getTag(event.getObjectId());
-            notes = tag.getNotes();
+            notes = tag.getNotesAsList();
         } else if (event.getType() == RefreshViewBus.RefreshTypes.NEW_NOTE
                 || event.getType() == RefreshViewBus.RefreshTypes.DELETED_NOTE
                 || event.getType() == RefreshViewBus.RefreshTypes.EDITED_NOTE) {

@@ -19,6 +19,7 @@ package org.kore.kolab.notes.fx.sync;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
@@ -48,8 +50,10 @@ import org.kore.kolab.notes.fx.domain.account.Account;
 import org.kore.kolab.notes.fx.domain.note.FXAttachment;
 import org.kore.kolab.notes.fx.domain.note.FXNote;
 import org.kore.kolab.notes.fx.domain.note.FXNotebook;
+import org.kore.kolab.notes.fx.domain.note.NoteFactory;
 import org.kore.kolab.notes.fx.domain.note.NoteRepository;
 import org.kore.kolab.notes.fx.domain.tag.FXTag;
+import org.kore.kolab.notes.fx.domain.tag.TagFactory;
 import org.kore.kolab.notes.fx.domain.tag.TagRepository;
 import org.kore.kolab.notes.fx.persistence.DeletedObject;
 import org.kore.kolab.notes.fx.persistence.DeletedObjectRepository;
@@ -75,6 +79,10 @@ public class SyncService {
 
     public void start() {
         ProgressForm pForm = new ProgressForm();
+        final NoteFactory noteFactory = new NoteFactory(account.getId());
+        final TagFactory tagFactory = new TagFactory(account.getId());
+        final Set<FXNote> allImportedNotes = new LinkedHashSet<>();
+        final Set<FXTag> allImportedTags = new LinkedHashSet<>();
 
         // In real life this task would do something useful and return 
         // some meaningful result:
@@ -135,19 +143,27 @@ public class SyncService {
                     DeletedObjectRepository deletedRepo = new DeletedObjectRepository(entityManager);
 
                     syncRemoteTagChanges(localTags, remoteTags, entityManager);
-                    updateProgress(8, 10);
                     syncRemoteNotebooks(remoteNotebooks, entityManager, imapRepository, deletedRepo.getDeletedObjects(account.getId()));
-                    updateProgress(9, 10);
-                    
-                    imapRepository.merge();
-                    
+                    updateProgress(8, 10);
+
                     account.setLastSync(System.currentTimeMillis());
                     entityManager.merge(account);
                     deletedRepo.clearDeletedObjects(account.getId());
+
+                    imapRepository.merge();
+                    updateProgress(9, 10);
+
                     entityManager.getTransaction().commit();
                 } catch (Exception e) {
                     e.printStackTrace();
                     entityManager.getTransaction().rollback();
+                    
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Sync Error");
+                    alert.setHeaderText("Error during sync");
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
+                    
                 } finally {
                     entityManager.close();
                     updateProgress(10, 10);
@@ -253,8 +269,7 @@ public class SyncService {
                         continue;
                     }
 
-                    FXNotebook newBook = new FXNotebook(account.getId(), UUID.randomUUID().toString());
-                    newBook.setSummary(remoteNotebook.getSummary());
+                    FXNotebook newBook = noteFactory.newNotebook(remoteNotebook.getSummary());
                     newBook.setCreationDate(remoteNotebook.getAuditInformation().getCreationDate());
                     newBook.setModificationDate(remoteNotebook.getAuditInformation().getLastModificationDate());
                     newBook.setProductId(remoteNotebook.getIdentification().getProductId());
@@ -271,14 +286,15 @@ public class SyncService {
                         remoteNotebook.deleteNote(remoteNote.getIdentification().getUid());
                         continue;
                     }
-                    
-                    FXNote newNote = new FXNote(account.getId(), remoteNote.getIdentification().getUid());
-                    setLocalNote(newNote, remoteNote, localBook);
+
+                    FXNote newNote = noteFactory.newNote(remoteNote.getSummary(), localBook);
+                    setLocalNote(newNote, remoteNote, localBook, em);
                     em.merge(newNote);
+                    allImportedNotes.add(newNote);
                 }
             }
 
-            void setLocalNote(FXNote localNote, Note remoteNote, FXNotebook localBook) {
+            void setLocalNote(FXNote localNote, Note remoteNote, FXNotebook localBook, EntityManager em) {
                 localNote.setProductId(remoteNote.getIdentification().getProductId());
                 localNote.setDescription(remoteNote.getDescription());
                 localNote.setSummary(remoteNote.getSummary());
@@ -296,8 +312,12 @@ public class SyncService {
 
                 ArrayList<FXTag> newTags = new ArrayList<>();
                 for (Tag remoteTag : remoteNote.getCategories()) {
-                    FXTag localTag = new FXTag(account.getId(), remoteTag.getIdentification().getUid());
-                    setLocalTag(localTag, remoteTag);
+                    //Tags should be already exist, create just if not
+                    FXTag localTag = em.find(FXTag.class, remoteTag.getIdentification().getUid());
+                    if (localTag == null) {
+                        localTag = tagFactory.newTag(remoteTag.getName());
+                    }
+                    setLocalTag(localTag, remoteTag, localNote);
                     newTags.add(localTag);
                 }
                 localNote.attachTags(newTags);
@@ -314,9 +334,10 @@ public class SyncService {
 
             void syncRemoteTagChanges(List<FXTag> localTags, Set<RemoteTags.TagDetails> remoteTags, EntityManager entityManager) {
                 for (RemoteTags.TagDetails remoteTag : remoteTags) {
-                    FXTag localTag = new FXTag(account.getId(), remoteTag.getIdentification().getUid());
+                    FXTag localTag = tagFactory.newTag(remoteTag.getTag().getName());
                     setLocalTag(localTag, remoteTag);
                     entityManager.merge(localTag);
+                    allImportedTags.add(localTag);
                 }
             }
 
@@ -333,7 +354,7 @@ public class SyncService {
                 localTag.setPriority(remoteTag.getTag().getPriority());
             }
 
-            void setLocalTag(FXTag localTag, Tag remoteTag) {
+            void setLocalTag(FXTag localTag, Tag remoteTag, FXNote note) {
                 localTag.setProductId(remoteTag.getIdentification().getProductId());
                 if (remoteTag.getColor() == null) {
                     localTag.setColor(null);
@@ -343,6 +364,10 @@ public class SyncService {
                 localTag.setCreationDate(remoteTag.getAuditInformation().getCreationDate());
                 localTag.setModificationDate(remoteTag.getAuditInformation().getLastModificationDate());
                 localTag.setSummary(remoteTag.getName());
+                
+                if (!localTag.getNotes().contains(note)) {
+                    localTag.addNotes(note);
+                }
             }
         };
 

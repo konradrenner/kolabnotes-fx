@@ -52,6 +52,6 @@ public class DeletedObjectRepository {
     }
 
     public void clearDeletedObjects(String accountId) {
-        em.createNativeQuery("delete from DeletedObject where accountId='" + accountId + "'").executeUpdate();
+        em.createQuery("delete from DeletedObject where accountId='" + accountId + "'").executeUpdate();
     }
 }

@@ -18,7 +18,9 @@ package org.kore.kolab.notes.fx.domain.tag;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -53,11 +55,11 @@ public class FXTag extends KolabObject implements Serializable {
     private int priority;
     
     @ManyToMany(mappedBy="tags")
-    private List<FXNote> notes;
+    private Set<FXNote> notes;
     
     public FXTag(String accountId, String id) {
         super(accountId, id);
-        notes = new ArrayList<>();
+        notes = new LinkedHashSet<>();
     }
 
     protected FXTag() {
@@ -72,12 +74,22 @@ public class FXTag extends KolabObject implements Serializable {
         this.priority = priority;
     }
 
-    public List<FXNote> getNotes() {
+    public Set<FXNote> getNotes() {
+        return new LinkedHashSet<>(notes);
+    }
+
+    public List<FXNote> getNotesAsList() {
         return new ArrayList<>(notes);
     }
 
     public void addNotes(List<FXNote> notes) {
-        this.notes = notes;
+        this.notes.addAll(notes);
+    }
+
+    public void addNotes(FXNote... notes) {
+        for (FXNote note : notes) {
+            this.notes.add(note);
+        }
     }
     
     public String getSummary() {
