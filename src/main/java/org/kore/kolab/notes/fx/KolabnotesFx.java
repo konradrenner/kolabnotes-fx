@@ -22,6 +22,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.kore.kolab.notes.fx.controller.ToolbarController;
 import org.kore.kolab.notes.fx.domain.account.Account;
@@ -46,6 +47,7 @@ public class KolabnotesFx extends Application {
         stage.setScene(scene);
         stage.setTitle("kolabnotes-fx");
         stage.setMaximized(true);
+        stage.getIcons().add(new Image(KolabnotesFx.class.getResourceAsStream("icon.png")));
         stage.show();
         
         RefreshViewBus.informListener(new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), null, RefreshViewBus.RefreshTypes.CHANGE_ACCOUNT));
