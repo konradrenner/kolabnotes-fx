@@ -150,7 +150,9 @@ public class SyncService {
                     entityManager.merge(account);
                     deletedRepo.clearDeletedObjects(account.getId());
 
-                    imapRepository.merge();
+                    if (tagsDirty || notesDirty) {
+                        imapRepository.merge();
+                    }
                     updateProgress(9, 10);
 
                     entityManager.getTransaction().commit();
