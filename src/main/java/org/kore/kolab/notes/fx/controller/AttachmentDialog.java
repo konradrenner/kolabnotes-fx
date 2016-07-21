@@ -40,6 +40,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -75,6 +76,7 @@ public class AttachmentDialog extends Dialog<Void> {
         init();
     }
 
+
     final void init() {
         note = repo.getNote(noteUID);
         addContent(note.getAttachments());
@@ -90,19 +92,22 @@ public class AttachmentDialog extends Dialog<Void> {
 
         int idx = 0;
         for (FXAttachment att : attachments) {
-            children.add(createAttachmentNode(idx++, att));
+            Pane createAttachmentNode = createAttachmentNode(idx++, att);
+            children.add(createAttachmentNode);
         }
 
         content.setCenter(scroll);
-        content.setTop(createButtons());
+        Pane buttonPane = createButtons();
+        buttonPane.prefWidthProperty().bind(content.widthProperty());
+        content.setTop(buttonPane);
 
         getDialogPane().setContent(content);
     }
 
-    private Node createButtons() {
-        FlowPane flow = new FlowPane(Orientation.HORIZONTAL);
+    private Pane createButtons() {
+        BorderPane pane = new BorderPane();
         Button add = new Button(bundle.getString("add"));
-
+        
         add.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -137,20 +142,22 @@ public class AttachmentDialog extends Dialog<Void> {
             }
         });
 
-        flow.getChildren().addAll(add);
-        flow.setPadding(new Insets(1.0));
+        pane.setCenter(add);
+        pane.setPadding(new Insets(1.0));
         getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
-        return flow;
+        return pane;
     }
 
-    private Node createAttachmentNode(int index, FXAttachment attachment) {
+    private Pane createAttachmentNode(int index, FXAttachment attachment) {
+        Insets insets = new Insets(2.0);
         BorderPane content = new BorderPane();
         FlowPane contentFlow = new FlowPane(Orientation.VERTICAL);
         contentFlow.setPadding(new Insets(1.0));
         Text fileName = new Text(attachment.getFileName());
-        fileName.setFont(Font.font(null, FontWeight.BOLD, 20));
+        fileName.setFont(Font.font(null, FontWeight.BOLD, 15));
         
         Text mimeType = new Text(attachment.getMimeType());
+        mimeType.setFont(Font.font(null, FontWeight.NORMAL, 15));
 
         contentFlow.getChildren().addAll(fileName, mimeType);
 
@@ -158,6 +165,7 @@ public class AttachmentDialog extends Dialog<Void> {
         
         FlowPane flow = new FlowPane(Orientation.VERTICAL);
         Button show = new Button(bundle.getString("open"));
+        show.setPadding(Insets.EMPTY);
 
         show.setOnAction(new OpenActionHandler(attachment));
 
@@ -166,10 +174,17 @@ public class AttachmentDialog extends Dialog<Void> {
         delete.setOnAction(new DeleteActionHandler(attachment, index));
         
         flow.getChildren().addAll(show, delete);
-        flow.setPadding(new Insets(2.0));
+        flow.setPadding(insets);
+        flow.setHgap(2);
+
+        flow.setPadding(insets);
+        show.setPadding(insets);
+        delete.setPadding(insets);
         
         content.setLeft(flow);
-
+        
+        content.setPrefHeight(55);
+        //content.setBorder(new Border(new BorderStroke(Paint.valueOf(Color.BLACK.toString()), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         return content;
     }
 

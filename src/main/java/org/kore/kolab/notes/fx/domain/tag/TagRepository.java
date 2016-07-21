@@ -59,6 +59,14 @@ public class TagRepository {
     public FXTag getTag(String uid) {
         return em.find(FXTag.class, uid);
     }
+
+    public FXTag getTagWithRefresh(String uid) {
+        FXTag find = em.find(FXTag.class, uid);
+        if (find != null) {
+            em.refresh(find);
+        }
+        return find;
+    }
     
     public void createTag(FXTag tag){
         Optional<FXTag> toCheck = getTagByName(tag.getAccountId(), tag.getSummary());

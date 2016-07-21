@@ -118,6 +118,11 @@ public class NotebookController implements Initializable, RefreshViewBus.Refresh
     void showAllNotes(ActionEvent event) {
         RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), null, RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK);
         RefreshViewBus.informListener(refreshEvent);
+
+        //Deselect all notebooks
+        for (Node node : notebookBox.getChildren()) {
+            node.getStyleClass().remove("selected_notebook");
+        }
     }
 
     @FXML
