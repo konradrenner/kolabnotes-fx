@@ -41,12 +41,15 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.kore.kolab.notes.Note;
 import org.kore.kolab.notes.fx.RefreshViewBus;
@@ -75,7 +78,7 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     
     @FXML
     private TextField summaryTextField;
-
+    
     private String noteUID;
     private String accountId;
 
@@ -88,7 +91,14 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
         subscribeToBus();
         bundle = resources;
         noteClassificationChoiceBox.setItems(FXCollections.observableArrayList(Note.Classification.values()));
+        setEditorHeight();
         setEmpty();
+    }
+
+    private void setEditorHeight() {
+        WebView webview = (WebView) noteEditor.lookup("WebView");
+        GridPane.setHgrow(webview, Priority.ALWAYS);
+        GridPane.setVgrow(webview, Priority.ALWAYS);
     }
 
     private void subscribeToBus() {
