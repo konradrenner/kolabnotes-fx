@@ -4,7 +4,7 @@
 
     <groupId>org.kore.kolab.notes</groupId>
     <artifactId>kolabnotes-fx</artifactId>
-    <version>1.1.4</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>kolabnotes-fx</name>

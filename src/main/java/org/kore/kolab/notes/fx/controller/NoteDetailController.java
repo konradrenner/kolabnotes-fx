@@ -16,6 +16,11 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +31,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.print.PrinterJob;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -41,6 +47,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.web.HTMLEditor;
+import javafx.stage.FileChooser;
 import org.kore.kolab.notes.Note;
 import org.kore.kolab.notes.fx.RefreshViewBus;
 import org.kore.kolab.notes.fx.domain.note.FXNote;
@@ -160,14 +167,72 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
         return "NoteDetailController";
     }
 
+    @FXML
+    void printNote(ActionEvent event) {
+        if (checkNoteNotSelected()) {
+            return;
+        }
+
+        NoteRepository repo = new NoteRepository();
+        FXNote note = repo.getNote(this.noteUID);
+
+        HTMLEditor forPrinting = new HTMLEditor();
+        forPrinting.setHtmlText(buildHtmlFile(note.getSummary(), note.getDescription()));
+
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null) {
+            boolean ok = job.showPrintDialog(noteEditor.getParent().getScene().getWindow());
+            if (ok) {
+                forPrinting.print(job);
+                job.endJob();
+            }
+        }
+    }
+
+    @FXML
+    void exportNote(ActionEvent event) {
+        if (checkNoteNotSelected()) {
+            return;
+        }
+        
+        NoteRepository repo = new NoteRepository();
+        FXNote note = repo.getNote(this.noteUID);
+        
+        try {
+            FileChooser chooser = new FileChooser();
+            chooser.setInitialFileName(note.getSummary() + ".html");
+            chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("HTML", "html"));
+            
+            File file = chooser.showSaveDialog(noteEditor.getScene().getWindow());
+
+            if (file != null) {
+
+                try (OutputStream stream = new FileOutputStream(file);
+                        ByteArrayInputStream input = new ByteArrayInputStream(buildHtmlFile(note.getSummary(), note.getDescription()).getBytes())) {
+                    int count;
+                    byte[] bytes = new byte[1024];
+                    while ((count = input.read(bytes)) != -1) {
+                        stream.write(bytes, 0, count);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    String buildHtmlFile(String summary, String text) {
+        StringBuilder builder = new StringBuilder("<html><head><h1>");
+        builder.append(summary);
+        builder.append("</h1><hr /></head><body>");
+        builder.append(text);
+        builder.append("</body></html>");
+        return builder.toString();
+    }
     
     @FXML
     void saveNote(ActionEvent event){
-        if (noteUID == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle(bundle.getString("error"));
-            alert.setHeaderText(bundle.getString("chooseNote"));
-            alert.showAndWait();
+        if (checkNoteNotSelected()) {
             return;
         }
         NoteRepository repo = new NoteRepository();
@@ -193,14 +258,21 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
         RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), note.getId(), RefreshViewBus.RefreshTypes.EDITED_NOTE);
         RefreshViewBus.informListener(refreshEvent);
     }
-    
-    @FXML
-    void editTags(ActionEvent event) {
+
+    private boolean checkNoteNotSelected() {
         if (noteUID == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(bundle.getString("error"));
             alert.setHeaderText(bundle.getString("chooseNote"));
             alert.showAndWait();
+            return true;
+        }
+        return false;
+    }
+
+    @FXML
+    void editTags(ActionEvent event) {
+        if (checkNoteNotSelected()) {
             return;
         }
 
@@ -250,11 +322,7 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
     
     @FXML
     void deleteNote(ActionEvent event) {
-        if (noteUID == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle(bundle.getString("error"));
-            alert.setHeaderText(bundle.getString("chooseNote"));
-            alert.showAndWait();
+        if (checkNoteNotSelected()) {
             return;
         }
 
@@ -268,11 +336,7 @@ public class NoteDetailController implements Initializable, RefreshViewBus.Refre
 
     @FXML
     void openAttachments(ActionEvent event) {
-        if (noteUID == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle(bundle.getString("error"));
-            alert.setHeaderText(bundle.getString("chooseNote"));
-            alert.showAndWait();
+        if (checkNoteNotSelected()) {
             return;
         }
 

@@ -39,6 +39,8 @@
                 <items>
                     <Button mnemonicParsing="false" onAction="#saveNote" text="%save" />
                     <Button mnemonicParsing="false" onAction="#deleteNote" text="%delete" />
+                    <Button mnemonicParsing="false" onAction="#exportNote" text="%export" />
+                    <Button mnemonicParsing="false" onAction="#printNote" text="%print" />
                     <Button mnemonicParsing="false" onAction="#openAttachments" text="%attachments" />
                     <ChoiceBox fx:id="noteClassificationChoiceBox" prefWidth="150.0" />
                     <ColorPicker fx:id="noteColorPicker" />
