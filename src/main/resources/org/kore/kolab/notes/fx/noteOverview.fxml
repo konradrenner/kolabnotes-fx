@@ -11,6 +11,7 @@
         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <buttons>
               <Button mnemonicParsing="false" onAction="#addNote" text="%add" />
+              <Button mnemonicParsing="false" onAction="#importFolder" text="%importFolder" />
           </buttons>
         </ButtonBar>
      </bottom>

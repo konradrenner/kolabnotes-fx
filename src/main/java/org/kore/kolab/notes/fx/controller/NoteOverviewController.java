@@ -16,7 +16,14 @@
  */
 package org.kore.kolab.notes.fx.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +41,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import org.kore.kolab.notes.fx.RefreshViewBus;
 import org.kore.kolab.notes.fx.domain.note.FXNote;
 import org.kore.kolab.notes.fx.domain.note.FXNotebook;
@@ -132,14 +140,67 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
         return "NoteOverviewController";
     }
 
-    private
+    @FXML
+    void importFolder(ActionEvent event) {
+        if (notebookNotSelected()) {
+            return;
+        }
+
+        final DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle(bundle.getString("newnote"));
+        chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        final File selectedDir = chooser.showDialog(noteRootPane.getScene().getWindow());
+
+        if (selectedDir != null) {
+
+            String selectedAccount = ToolbarController.getSelectedAccount();
+
+            NoteRepository repo = new NoteRepository();
+            NoteFactory factory = new NoteFactory(selectedAccount);
+            FXNotebook notebook = repo.getNotebook(notebookId);
+            List<FXNote> notes = new ArrayList<>();
+            
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(selectedDir.toPath(), (Path entry) -> {
+                boolean isNotDirectory = !Files.isDirectory(entry, LinkOption.NOFOLLOW_LINKS);
+                boolean readable = Files.isReadable(entry);
+                boolean endsWith = entry.getFileName().toString().toLowerCase().endsWith(".txt");
+                return isNotDirectory && readable && endsWith;
+            })) {
+
+                String lineSeparator = System.getProperty("line.separator");
+
+                for (Path path : directoryStream) {
+                    String filename = path.getFileName().toString();
+                    String summary = filename.substring(0, filename.length() - 4);
+
+                    StringBuilder description = new StringBuilder("<pre>");
+                    try (BufferedReader reader = Files.newBufferedReader(path)) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            description.append(line).append(lineSeparator);
+                        }
+                    }
+                    description.append("</pre>");
+
+                    FXNote newNote = factory.newNote(summary, notebook);
+                    newNote.setDescription(description.toString());
+                    notes.add(newNote);
+                }
+
+                repo.createNotes(notebook, notes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), notebookId, RefreshViewBus.RefreshTypes.SELECTED_NOTEBOOK);
+            RefreshViewBus.informListener(refreshEvent);
+        }
+    }
+
     @FXML
     void addNote(ActionEvent event) {
-        if (notebookId == null) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle(bundle.getString("error"));
-            alert.setHeaderText(bundle.getString("chooseNotebook"));
-            alert.showAndWait();
+        if (notebookNotSelected()) {
             return;
         }
 
@@ -151,6 +212,17 @@ public class NoteOverviewController implements Initializable, RefreshViewBus.Ref
 
         RefreshViewBus.RefreshEvent refreshEvent = new RefreshViewBus.RefreshEvent(ToolbarController.getSelectedAccount(), newNote.getId(), RefreshViewBus.RefreshTypes.NEW_NOTE);
         RefreshViewBus.informListener(refreshEvent);
+    }
+
+    private boolean notebookNotSelected() {
+        if (notebookId == null) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle(bundle.getString("error"));
+            alert.setHeaderText(bundle.getString("chooseNotebook"));
+            alert.showAndWait();
+            return true;
+        }
+        return false;
     }
     
     private TitledPane createNoteView(FXNote note) {
